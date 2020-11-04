@@ -31,6 +31,9 @@ spec:
               containerPort: 8080
             - name: management
               containerPort: 9090
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
           resources:
             limits:
               cpu: 400m
