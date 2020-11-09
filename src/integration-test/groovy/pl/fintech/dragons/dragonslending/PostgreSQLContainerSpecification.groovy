@@ -1,4 +1,4 @@
-package pl.fintech.dragonsinvestments.investmentcalculator
+package pl.fintech.dragons.dragonslending
 
 import groovy.sql.Sql
 import org.springframework.test.context.DynamicPropertyRegistry
