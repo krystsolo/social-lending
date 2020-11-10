@@ -7,8 +7,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
 import pl.fintech.dragons.dragonslending.identity.UserData
-import pl.fintech.dragons.dragonslending.identity.application.UserCredentials
 import pl.fintech.dragons.dragonslending.identity.domain.User
+import pl.fintech.dragons.dragonslending.identity.domain.UserPrincipal
 import pl.fintech.dragons.dragonslending.identity.domain.UserRepository
 import spock.lang.Subject
 
@@ -113,12 +113,12 @@ class UserRepositoryAdapterIT extends PostgreSQLContainerSpecification {
         userRepository.save(user)
 
         when:
-        UserCredentials credentials = userRepository.getCredentialsFor(user.email)
+        UserPrincipal userPrincipal = userRepository.getPrincipalFor(user.email)
 
         then:
-        with(credentials) {
+        with(userPrincipal) {
             getId() == user.id
-            getEmail() == user.email
+            getUsername() == user.email
             getPassword() == user.password
         }
     }

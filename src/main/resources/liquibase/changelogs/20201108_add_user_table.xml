@@ -4,8 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-    <changeSet author="krystiansoloducha" id="20201022_add_basket_table.xml">
-        <createTable tableName="user">
+    <changeSet author="krystiansoloducha" id="20201108_add_user_account_table">
+        <createTable tableName="user_account">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" />
             </column>

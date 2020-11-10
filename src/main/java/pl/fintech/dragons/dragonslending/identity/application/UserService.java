@@ -29,8 +29,4 @@ public class UserService {
         user = repository.save(user);
         return user.getId();
     }
-
-    public UserCredentials getUserCredentials(String email) {
-        return repository.getCredentialsFor(email);
-    }
 }

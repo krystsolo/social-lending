@@ -72,13 +72,13 @@ class UserControllerIT extends Specification {
         response.body().as(UserDto) == userDto
     }
 
-    def 'POST /api/users should register new user and return HTTP 201 with user id'() {
+    def 'POST /api/users/sign-up should register new user and return HTTP 201 with user id'() {
         given:
         UserRegisterRequest request = USER_REGISTER_REQUEST
         mockedUserService.register(USER_REGISTER_REQUEST) >> USER_ID
 
         when:
-        def response = restClient.with().body(request).when().post(USER_PATH)
+        def response = restClient.with().body(request).when().post(USER_PATH + '/sign-up')
 
         println response.headers()
         then:

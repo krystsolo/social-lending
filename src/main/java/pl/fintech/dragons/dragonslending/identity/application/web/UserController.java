@@ -35,7 +35,7 @@ class UserController {
         return userService.getUser(id);
     }
 
-    @PostMapping
+    @PostMapping("/sign-up")
     ResponseEntity<Void> registerUser(@RequestBody @Valid UserRegisterRequest userRegisterRequest) throws URISyntaxException {
         log.debug("REST request to register new User : {}", userRegisterRequest);
         UUID userId = userService.register(userRegisterRequest);

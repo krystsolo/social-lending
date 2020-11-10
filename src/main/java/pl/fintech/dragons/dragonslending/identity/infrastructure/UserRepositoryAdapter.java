@@ -2,9 +2,10 @@ package pl.fintech.dragons.dragonslending.identity.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
-import pl.fintech.dragons.dragonslending.identity.application.UserCredentials;
 import pl.fintech.dragons.dragonslending.identity.domain.User;
+import pl.fintech.dragons.dragonslending.identity.domain.UserPrincipal;
 import pl.fintech.dragons.dragonslending.identity.domain.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,13 +42,14 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public UserCredentials getCredentialsFor(String email) {
-        return repository.getCredentialsByEmailContainingIgnoreCase(email);
+    public UserPrincipal getPrincipalFor(String email) {
+        return repository.findByEmailContainingIgnoreCase(email)
+                .map(user -> new UserPrincipal(user.getId(), user.getEmail(), user.getPassword()))
+                .orElseThrow(() -> new UsernameNotFoundException("User with email:" + email + " doesn't exist in database"));
     }
 
     interface UserJpaRepository extends JpaRepository<User, UUID> {
         Optional<User> findByUsernameContainingIgnoreCase(String username);
         Optional<User> findByEmailContainingIgnoreCase(String email);
-        UserCredentials getCredentialsByEmailContainingIgnoreCase(String email);
     }
 }
