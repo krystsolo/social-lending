@@ -7,6 +7,8 @@ import pl.fintech.dragons.dragonslending.identity.application.web.UserRegisterRe
 import pl.fintech.dragons.dragonslending.identity.domain.User;
 import pl.fintech.dragons.dragonslending.identity.domain.UserFactory;
 import pl.fintech.dragons.dragonslending.identity.domain.UserRepository;
+import pl.fintech.dragons.dragonslending.security.AuthenticationFacade;
+import pl.fintech.dragons.dragonslending.security.AuthenticationFromSecurityContextRetriever;
 
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ public class UserService {
 
     private final UserFactory userFactory;
     private final UserRepository repository;
+    private final AuthenticationFacade authenticationFacade;
 
     @Transactional(readOnly = true)
     public UserDto getUser(UUID id) {
@@ -28,5 +31,11 @@ public class UserService {
         User user = userFactory.from(userRegisterRequest);
         user = repository.save(user);
         return user.getId();
+    }
+
+    public UserDto getCurrentLoggedUser() {
+        UUID idOfCurrentLoggedUser = authenticationFacade.idOfCurrentLoggedUser();
+        User user = repository.getOne(idOfCurrentLoggedUser);
+        return user.toDto();
     }
 }

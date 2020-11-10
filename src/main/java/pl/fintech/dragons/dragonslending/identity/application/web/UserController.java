@@ -35,6 +35,12 @@ class UserController {
         return userService.getUser(id);
     }
 
+    @GetMapping("/self")
+    UserDto getCurrentLoggedUser() {
+        log.debug("REST request to get current logged User");
+        return userService.getCurrentLoggedUser();
+    }
+
     @PostMapping("/sign-up")
     ResponseEntity<Void> registerUser(@RequestBody @Valid UserRegisterRequest userRegisterRequest) throws URISyntaxException {
         log.debug("REST request to register new User : {}", userRegisterRequest);
