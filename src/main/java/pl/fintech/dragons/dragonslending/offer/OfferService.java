@@ -2,10 +2,11 @@ package pl.fintech.dragons.dragonslending.offer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import pl.fintech.dragons.dragonslending.identity.application.UserService;
+import pl.fintech.dragons.dragonslending.offer.calculator.OfferCalculator;
 import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
 import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest;
 import pl.fintech.dragons.dragonslending.offer.dto.mapper.OfferMapper;
-import pl.fintech.dragons.dragonslending.security.AuthenticationFacade;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,21 +16,28 @@ import java.util.stream.Collectors;
 @Transactional
 public class OfferService {
   private final OfferRepository offerRepository;
-  private final AuthenticationFacade authenticationFacade;
+  private final OfferCalculator offerCalculator;
+  private final UserService userService;
 
   @Transactional(readOnly = true)
-  OfferQueryDto getOffer(UUID id) {
+  public OfferQueryDto getOffer(UUID id) {
+    Offer offer = offerRepository.getOne(id);
     return OfferMapper
-        .getReturnDtoFromEntity(offerRepository
-            .getOne(id), "User");
+        .getReturnDtoFromEntity(
+            offer,
+            offerCalculator.calculate(offer),
+            userService.getUser(id).getUsername());
   }
 
   @Transactional(readOnly = true)
-  List<OfferQueryDto> getOffers() {
+  public List<OfferQueryDto> getOffers() {
     return offerRepository
         .findAll()
         .stream()
-        .map(e -> OfferMapper.getReturnDtoFromEntity(e, "User"))
+        .map(e -> OfferMapper.getReturnDtoFromEntity(
+            e,
+            offerCalculator.calculate(e),
+            userService.getUser(e.getId()).getUsername()))
         .collect(Collectors.toList());
   }
 
@@ -39,7 +47,7 @@ public class OfferService {
         dto.getTimePeriod(),
         dto.getInterestRate(),
         dto.getEndDate(),
-        authenticationFacade.idOfCurrentLoggedUser()
+        userService.getCurrentLoggedUser().getId()
     );
 
     offerRepository.save(def);
@@ -53,7 +61,7 @@ public class OfferService {
 
     Offer offer = offerRepository.getOne(dto.getId());
 
-    if (!authenticationFacade.idOfCurrentLoggedUser().equals(offer.getUserId())) {
+    if (!userService.getCurrentLoggedUser().getId().equals(offer.getUserId())) {
       throw new IllegalAccessException("You don't have permission to update this offer");
     }
 

@@ -1,11 +1,11 @@
 package pl.fintech.dragons.dragonslending.offer.dto.mapper;
 
 import pl.fintech.dragons.dragonslending.offer.Offer;
-import pl.fintech.dragons.dragonslending.offer.calculator.OfferCalculator;
+import pl.fintech.dragons.dragonslending.offer.dto.CalculationDto;
 import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
 
 public class OfferMapper {
-  public OfferQueryDto getReturnDtoFromEntity(Offer entity, String user) {
+  public static OfferQueryDto getReturnDtoFromEntity(Offer entity, CalculationDto calculationDto, String username) {
     if (entity == null) {
       return null;
     }
@@ -15,8 +15,9 @@ public class OfferMapper {
         .timePeriod(entity.getTimePeriod())
         .interestRate(entity.getInterestRate())
         .endDate(entity.getEndDate())
-        .calculation(OfferCalculator.calculate(entity.getLoanAmount(), entity.getInterestRate(), entity.getTimePeriod()))
-        .user(user)
+        .calculation(calculationDto)
+        .userId(entity.getId())
+        .username(username)
         .build();
   }
 }

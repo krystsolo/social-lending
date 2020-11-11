@@ -21,7 +21,7 @@
             <column name="end_date" type="date">
                 <constraints nullable="false" />
             </column>
-            <column name="user" type="VARCHAR(255)">
+            <column name="user_id" type="UUID">
                 <constraints nullable="false" />
             </column>
         </createTable>

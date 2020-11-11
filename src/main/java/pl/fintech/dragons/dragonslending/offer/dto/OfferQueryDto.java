@@ -18,5 +18,6 @@ public class OfferQueryDto {
   Float interestRate;
   LocalDate endDate;
   CalculationDto calculation;
-  String user;
+  UUID userId;
+  String username;
 }

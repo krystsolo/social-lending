@@ -43,21 +43,21 @@ class OfferController {
 
   @Operation(summary = "Save offer")
   @PostMapping("/offers")
-  ResponseEntity<OfferQueryDto> createOffer(@RequestBody @Valid OfferRequest offerRequest) throws URISyntaxException {
+  ResponseEntity<UUID> createOffer(@RequestBody @Valid OfferRequest offerRequest) throws URISyntaxException {
     log.debug("REST request to create Offer : {}", offerRequest);
-    OfferQueryDto result = offerService.saveOfferDto(offerRequest);
-    return ResponseEntity.created(new URI("/api/offers/" + result.getId()))
-        .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-        .body(result);
+    UUID offerId = offerService.saveOfferDto(offerRequest);
+    return ResponseEntity.created(new URI("/api/offers/" + offerId))
+        .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, offerId.toString()))
+        .body(offerId);
   }
 
   @Operation(summary = "Update offer")
   @PutMapping("/offers/{id}")
-  ResponseEntity<OfferQueryDto> updateOfferDto(@RequestBody @Valid OfferRequest offerRequest) {
+  ResponseEntity<UUID> updateOfferDto(@RequestBody @Valid OfferRequest offerRequest) throws IllegalAccessException {
     log.debug("REST request to update Offer : {}", offerRequest);
-    OfferQueryDto result = offerService.updateOfferDto(offerRequest);
+    UUID offerId = offerService.updateOfferDto(offerRequest);
     return ResponseEntity.ok()
-        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-        .body(result);
+        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, offerId.toString()))
+        .body(offerId);
   }
 }
