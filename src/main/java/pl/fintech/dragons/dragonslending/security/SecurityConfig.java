@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,8 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pl.fintech.dragons.dragonslending.identity.application.UserDetailsProvider;
 
-import static pl.fintech.dragons.dragonslending.security.SecurityConstants.SIGN_IN_URL;
-import static pl.fintech.dragons.dragonslending.security.SecurityConstants.SIGN_UP_URL;
+import static pl.fintech.dragons.dragonslending.security.SecurityConstants.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,6 +30,15 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsProvider).passwordEncoder(passwordEncoder);
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/swagger-ui.html",
+            "/swagger-ui/*",
+            "/v3/api-docs/*",
+            "/v3/api-docs"
+        );
     }
 
     @Override
