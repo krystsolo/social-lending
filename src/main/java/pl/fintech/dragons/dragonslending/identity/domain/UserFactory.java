@@ -2,6 +2,7 @@ package pl.fintech.dragons.dragonslending.identity.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.fintech.dragons.dragonslending.identity.application.web.UserRegisterRequest;
 

@@ -105,7 +105,6 @@ metadata:
 spec:
   basicAuth:
     secret: fintech-uat-ersa-team-basic-auth-secret
-    headerField: X-WebAuth-User
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute

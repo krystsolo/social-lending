@@ -64,11 +64,10 @@ class LoginIT extends Specification {
         when:
         def response = restClient.with().body(credentials).when().post('/api/login')
 
-        println response.headers()
         then:
         response.statusCode() == 200
         and:
-        response.headers().get("Authorization").value != null
+        response.headers().get(SecurityConstants.HEADER_STRING).value != null
     }
 
     def 'POST /api/login should not log in when user credentials are not correct'() {
@@ -79,7 +78,6 @@ class LoginIT extends Specification {
         when:
         def response = restClient.with().body(credentials).when().post('/api/login')
 
-        println response.headers()
         then:
         response.statusCode() == 401
     }
