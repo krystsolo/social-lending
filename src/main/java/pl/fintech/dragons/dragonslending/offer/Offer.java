@@ -1,6 +1,7 @@
 package pl.fintech.dragons.dragonslending.offer;
 
 import lombok.*;
+import pl.fintech.dragons.dragonslending.identity.domain.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -41,16 +42,15 @@ public class Offer {
   @NotNull
   private LocalDate endDate;
 
-  //TODO JoinColumn etc
-  @Column(name = "user")
-  String user;
+  @Column(name = "user_id")
+  UUID userId;
 
-  Offer(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate, String user) {
+  Offer(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate, UUID userId) {
     this.id = UUID.randomUUID();
     this.loanAmount = loanAmount;
     this.timePeriod = timePeriod;
     this.interestRate = interestRate;
-    this.user = user;
+    this.userId = userId;
     setEndDate(endDate);
   }
 

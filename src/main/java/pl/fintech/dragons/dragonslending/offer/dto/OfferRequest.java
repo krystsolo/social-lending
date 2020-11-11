@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @Value
-public class OfferDto {
+public class OfferRequest {
   UUID id;
 
   @NotNull
@@ -34,7 +34,4 @@ public class OfferDto {
   @NotNull
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.mm.rrrr")
   LocalDate endDate;
-
-  @NotNull
-  String user;
 }

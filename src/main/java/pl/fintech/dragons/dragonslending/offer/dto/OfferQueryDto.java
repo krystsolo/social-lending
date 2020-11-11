@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @Value
-public class OfferReturnDto {
+public class OfferQueryDto {
   UUID id;
   BigDecimal loanAmount;
   Integer timePeriod;

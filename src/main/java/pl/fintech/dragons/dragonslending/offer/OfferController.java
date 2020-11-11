@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferDto;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferReturnDto;
-import pl.fintech.dragons.dragonslending.utils.HeaderUtil;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
+import pl.fintech.dragons.dragonslending.common.HeaderUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -29,23 +29,23 @@ class OfferController {
 
   @Operation(summary = "Get offer details by id")
   @GetMapping("/offers/{id}")
-  OfferDto getOfferById(@PathVariable UUID id) {
+  OfferQueryDto getOfferById(@PathVariable UUID id) {
     log.debug("REST request to get Offer : {}", id);
     return offerService.getOffer(id);
   }
 
   @Operation(summary = "Get list of offers")
   @GetMapping("/offers")
-  List<OfferReturnDto> getOffers() {
+  List<OfferQueryDto> getOffers() {
     log.debug("REST request to get list of Offers");
     return offerService.getOffers();
   }
 
   @Operation(summary = "Save offer")
   @PostMapping("/offers")
-  ResponseEntity<OfferDto> createOffer(@RequestBody @Valid OfferDto offerDto) throws URISyntaxException {
-    log.debug("REST request to create Offer : {}", offerDto);
-    OfferDto result = offerService.saveOfferDto(offerDto);
+  ResponseEntity<OfferQueryDto> createOffer(@RequestBody @Valid OfferRequest offerRequest) throws URISyntaxException {
+    log.debug("REST request to create Offer : {}", offerRequest);
+    OfferQueryDto result = offerService.saveOfferDto(offerRequest);
     return ResponseEntity.created(new URI("/api/offers/" + result.getId()))
         .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
         .body(result);
@@ -53,9 +53,9 @@ class OfferController {
 
   @Operation(summary = "Update offer")
   @PutMapping("/offers/{id}")
-  ResponseEntity<OfferDto> updateOfferDto(@RequestBody @Valid OfferDto offerDto) {
-    log.debug("REST request to update Offer : {}", offerDto);
-    OfferDto result = offerService.updateOfferDto(offerDto);
+  ResponseEntity<OfferQueryDto> updateOfferDto(@RequestBody @Valid OfferRequest offerRequest) {
+    log.debug("REST request to update Offer : {}", offerRequest);
+    OfferQueryDto result = offerService.updateOfferDto(offerRequest);
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
         .body(result);

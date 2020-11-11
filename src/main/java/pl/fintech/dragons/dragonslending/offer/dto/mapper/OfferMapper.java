@@ -1,33 +1,22 @@
 package pl.fintech.dragons.dragonslending.offer.dto.mapper;
 
 import pl.fintech.dragons.dragonslending.offer.Offer;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferDto;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferReturnDto;
+import pl.fintech.dragons.dragonslending.offer.calculator.OfferCalculator;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
 
 public class OfferMapper {
-  public static OfferDto getDtoFromEntity(Offer entity) {
+  public OfferQueryDto getReturnDtoFromEntity(Offer entity, String user) {
     if (entity == null) {
       return null;
     }
-    return OfferDto.builder()
+    return OfferQueryDto.builder()
         .id(entity.getId())
         .loanAmount(entity.getLoanAmount())
         .timePeriod(entity.getTimePeriod())
         .interestRate(entity.getInterestRate())
         .endDate(entity.getEndDate())
-        .build();
-  }
-
-  public static OfferReturnDto getReturnDtoFromEntity(Offer entity, String user) {
-    if (entity == null) {
-      return null;
-    }
-    return OfferReturnDto.builder()
-        .id(entity.getId())
-        .loanAmount(entity.getLoanAmount())
-        .timePeriod(entity.getTimePeriod())
-        .interestRate(entity.getInterestRate())
-        .endDate(entity.getEndDate())
+        .calculation(OfferCalculator.calculate(entity.getLoanAmount(), entity.getInterestRate(), entity.getTimePeriod()))
+        .user(user)
         .build();
   }
 }

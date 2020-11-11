@@ -1,62 +1,71 @@
 package pl.fintech.dragons.dragonslending.offer;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferDto;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferReturnDto;
+import org.springframework.transaction.annotation.Transactional;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest;
 import pl.fintech.dragons.dragonslending.offer.dto.mapper.OfferMapper;
+import pl.fintech.dragons.dragonslending.security.AuthenticationFacade;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
+@Transactional
 public class OfferService {
   private final OfferRepository offerRepository;
+  private final AuthenticationFacade authenticationFacade;
 
-  OfferDto getOffer(UUID id) {
+  @Transactional(readOnly = true)
+  OfferQueryDto getOffer(UUID id) {
     return OfferMapper
-        .getDtoFromEntity(offerRepository
-            .getOne(id));
+        .getReturnDtoFromEntity(offerRepository
+            .getOne(id), "User");
   }
 
-  List<OfferReturnDto> getOffers() {
+  @Transactional(readOnly = true)
+  List<OfferQueryDto> getOffers() {
     return offerRepository
         .findAll()
         .stream()
-        .map(e -> OfferMapper.getReturnDtoFromEntity(e, "user"))
+        .map(e -> OfferMapper.getReturnDtoFromEntity(e, "User"))
         .collect(Collectors.toList());
   }
 
-  OfferDto saveOfferDto(OfferDto dto) {
+  UUID saveOfferDto(OfferRequest dto) {
     Offer def = new Offer(
         dto.getLoanAmount(),
         dto.getTimePeriod(),
         dto.getInterestRate(),
         dto.getEndDate(),
-        dto.getUser()
+        authenticationFacade.idOfCurrentLoggedUser()
     );
 
     offerRepository.save(def);
-    return getOffer(def.getId());
+    return def.getId();
   }
 
-  OfferDto updateOfferDto(OfferDto dto) {
-    if(dto.getId() != null) {
-      Offer offer = offerRepository.getOne(dto.getId());
-      offer = new Offer(
-          offer.getId(),
-          offer.getLoanAmount(),
-          offer.getTimePeriod(),
-          offer.getInterestRate(),
-          offer.getEndDate(),
-          offer.getUser()
-      );
-      offerRepository.save(offer);
-      return getOffer(offer.getId());
-    } else {
+  UUID updateOfferDto(OfferRequest dto) throws IllegalAccessException {
+    if (dto.getId() == null) {
       throw new IllegalArgumentException("Object cannot be updated, id is null");
     }
+
+    Offer offer = offerRepository.getOne(dto.getId());
+
+    if (!authenticationFacade.idOfCurrentLoggedUser().equals(offer.getUserId())) {
+      throw new IllegalAccessException("You don't have permission to update this offer");
+    }
+
+    offer = new Offer(
+        offer.getId(),
+        offer.getLoanAmount(),
+        offer.getTimePeriod(),
+        offer.getInterestRate(),
+        offer.getEndDate(),
+        offer.getUserId()
+    );
+
+    return offer.getId();
   }
 }
