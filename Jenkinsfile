@@ -49,7 +49,6 @@ pipeline {
                     withCredentials([file(credentialsId: 'kubeconfig-sit', variable: 'KUBECONFIG')]) {
                         sh "kubectl apply -f ./kubernetes-sit.yaml"
                         sh "kubectl rollout restart deployment dragons-lending-api"
-                        sh "kubectl rollout status deployment dragons-lending-api --timeout=10m"
                     }
                 }
             }
