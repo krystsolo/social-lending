@@ -36,11 +36,11 @@ spec:
               value: "prod"
           resources:
             limits:
-              cpu: 400m
-              memory: 256Mi
+              cpu: 600m
+              memory: 500Mi
             requests:
               cpu: 50m
-              memory: 32Mi
+              memory: 50Mi
           livenessProbe:
             httpGet:
               path: /actuator/health
