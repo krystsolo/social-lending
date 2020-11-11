@@ -17,6 +17,6 @@ public class OfferReturnDto {
   Integer timePeriod;
   Float interestRate;
   LocalDate endDate;
-  BigDecimal finalValue;
+  CalculationDto calculation;
   String user;
 }
