@@ -1,16 +1,18 @@
 package pl.fintech.dragons.dragonslending.offer;
 
 import lombok.*;
-import pl.fintech.dragons.dragonslending.identity.domain.User;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "offers")
+@Table(name = "offer")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -55,9 +57,16 @@ public class Offer {
   }
 
   void setEndDate(LocalDate endDate) {
-    if(!this.endDate.isAfter(LocalDate.now())) {
+    if (!endDate.isAfter(LocalDate.now())) {
       throw new IllegalArgumentException("Date must be in future");
     }
+    this.endDate = endDate;
+  }
+
+  void changeOfferParameters(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate) {
+    this.loanAmount = loanAmount;
+    this.timePeriod = timePeriod;
+    this.interestRate = interestRate;
     this.endDate = endDate;
   }
 }

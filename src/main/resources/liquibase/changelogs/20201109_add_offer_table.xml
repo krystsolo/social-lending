@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
     <changeSet author="maciejparapura" id="20201109_add_offer_table.xml">
-        <createTable tableName="offers">
+        <createTable tableName="offer">
             <column name="id" type="UUID">
                 <constraints nullable="false" primaryKey="true" />
             </column>
@@ -22,7 +22,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="user_id" type="UUID">
-                <constraints nullable="false" />
+                <constraints nullable="false" foreignKeyName="fk_offer_user_account" references="user_account(id)"/>
             </column>
         </createTable>
     </changeSet>

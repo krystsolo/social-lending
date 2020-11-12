@@ -32,6 +32,6 @@ public class OfferRequest {
   Float interestRate;
 
   @NotNull
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.mm.rrrr")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.mm.yyyy")
   LocalDate endDate;
 }

@@ -6,13 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
 import pl.fintech.dragons.dragonslending.common.HeaderUtil;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,7 +54,7 @@ class OfferController {
 
   @Operation(summary = "Update offer")
   @PutMapping("/offers/{id}")
-  ResponseEntity<UUID> updateOfferDto(@RequestBody @Valid OfferRequest offerRequest) throws IllegalAccessException {
+  ResponseEntity<UUID> updateOfferDto(@RequestBody @Valid OfferRequest offerRequest) throws AccessDeniedException {
     log.debug("REST request to update Offer : {}", offerRequest);
     UUID offerId = offerService.updateOfferDto(offerRequest);
     return ResponseEntity.ok()
