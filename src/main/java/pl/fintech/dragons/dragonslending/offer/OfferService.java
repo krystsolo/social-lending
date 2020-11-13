@@ -44,7 +44,7 @@ public class OfferService {
         .collect(Collectors.toList());
   }
 
-  UUID saveOfferDto(OfferRequest dto) {
+  public UUID saveOfferDto(OfferRequest dto) {
     Offer def = new Offer(
         dto.getLoanAmount(),
         dto.getTimePeriod(),
@@ -57,7 +57,7 @@ public class OfferService {
     return def.getId();
   }
 
-  UUID updateOfferDto(OfferRequest dto) throws AccessDeniedException {
+  public UUID updateOfferDto(OfferRequest dto) throws AccessDeniedException {
     if (dto.getId() == null) {
       throw new IllegalArgumentException("Object cannot be updated, id is null");
     }
@@ -75,7 +75,6 @@ public class OfferService {
         dto.getEndDate()
     );
 
-    offerRepository.save(offer);
     return offer.getId();
   }
 }

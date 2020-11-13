@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
 import pl.fintech.dragons.dragonslending.identity.UserData
 import pl.fintech.dragons.dragonslending.identity.application.UserService
+import pl.fintech.dragons.dragonslending.identity.infrastructure.UserConfig
 import pl.fintech.dragons.dragonslending.offer.Offer
 import pl.fintech.dragons.dragonslending.offer.OfferRepository
+import pl.fintech.dragons.dragonslending.offer.config.OfferConfig
 import spock.lang.Subject
 
 import java.time.LocalDate
@@ -16,6 +19,7 @@ import java.time.LocalDate
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ContextConfiguration(classes = [OfferConfig.class, UserConfig.class])
 class OfferRepositoryIT extends PostgreSQLContainerSpecification {
 
     @Subject
