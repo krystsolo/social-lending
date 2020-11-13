@@ -1,6 +1,8 @@
 package pl.fintech.dragons.dragonslending.offer;
 
 import lombok.*;
+import pl.fintech.dragons.dragonslending.offer.dto.CalculationDto;
+import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +49,7 @@ public class Offer {
   @Column(name = "user_id")
   UUID userId;
 
-  Offer(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate, UUID userId) {
+  Offer(BigDecimal loanAmount, Integer timePeriod, Float interestRate,@NonNull LocalDate endDate, UUID userId) {
     this.id = UUID.randomUUID();
     this.loanAmount = loanAmount;
     this.timePeriod = timePeriod;
@@ -56,7 +58,7 @@ public class Offer {
     setEndDate(endDate);
   }
 
-  void setEndDate(LocalDate endDate) {
+  private void setEndDate(LocalDate endDate) {
     if (!endDate.isAfter(LocalDate.now())) {
       throw new IllegalArgumentException("Date must be in future");
     }
@@ -67,6 +69,19 @@ public class Offer {
     this.loanAmount = loanAmount;
     this.timePeriod = timePeriod;
     this.interestRate = interestRate;
-    this.endDate = endDate;
+    setEndDate(endDate);
+  }
+
+  public OfferQueryDto toOfferQueryDto(CalculationDto calculationDto, String username) {
+    return OfferQueryDto.builder()
+        .id(this.id)
+        .loanAmount(this.loanAmount)
+        .timePeriod(this.timePeriod)
+        .interestRate(this.interestRate)
+        .endDate(this.endDate)
+        .calculation(calculationDto)
+        .userId(this.userId)
+        .username(username)
+        .build();
   }
 }

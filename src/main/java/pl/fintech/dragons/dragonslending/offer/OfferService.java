@@ -2,8 +2,10 @@ package pl.fintech.dragons.dragonslending.offer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import pl.fintech.dragons.dragonslending.identity.application.UserDto;
 import pl.fintech.dragons.dragonslending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.offer.calculator.OfferCalculator;
+import pl.fintech.dragons.dragonslending.offer.dto.CalculationDto;
 import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
 import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest;
 
@@ -22,12 +24,12 @@ public class OfferService {
   @Transactional(readOnly = true)
   public OfferQueryDto getOffer(UUID id) {
     Offer offer = offerRepository.getOne(id);
-    return OfferQueryDto
-        .entityToDto(
-            offer,
-            offerCalculator.calculate(offer),
-            userService.getUser(id).getUsername()
-        );
+    CalculationDto calculationDto = offerCalculator.calculate(offer);
+    UserDto user = userService.getUser(offer.getUserId());
+    return offer.toOfferQueryDto(
+        calculationDto,
+        user.getUsername()
+    );
   }
 
   @Transactional(readOnly = true)
@@ -35,10 +37,9 @@ public class OfferService {
     return offerRepository
         .findAll()
         .stream()
-        .map(e -> OfferQueryDto.entityToDto(
-            e,
+        .map(e -> e.toOfferQueryDto(
             offerCalculator.calculate(e),
-            userService.getUser(e.getId()).getUsername())
+            userService.getUser(e.getUserId()).getUsername())
         )
         .collect(Collectors.toList());
   }
