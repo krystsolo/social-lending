@@ -1,0 +1,81 @@
+package pl.fintech.dragons.dragonslending.offer
+
+import io.restassured.RestAssured
+import io.restassured.specification.RequestSpecification
+import org.mockito.Mock
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Primary
+import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
+import pl.fintech.dragons.dragonslending.offer.OfferService
+import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest
+import spock.lang.Specification
+import spock.mock.DetachedMockFactory
+
+@SpringBootTest(
+        classes = [
+                StubConfig.class,
+                DispatcherServletAutoConfiguration.class,
+                ServletWebServerFactoryAutoConfiguration.class,
+                WebEndpointAutoConfiguration.class,
+                EndpointAutoConfiguration.class,
+        ],
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebMvc
+@ActiveProfiles("integration-test")
+class OfferControllerIT extends Specification {
+
+    @LocalServerPort
+    int serverPort
+
+    @Autowired
+    OfferService mockedOfferService
+
+    RequestSpecification restClient
+
+    def setup() {
+        restClient = RestAssured.given()
+                .port(serverPort)
+                .accept(MediaType.APPLICATION_JSON.toString())
+                .contentType(MediaType.APPLICATION_JSON.toString())
+                .log().all()
+    }
+
+    def 'GET /api/offers/{id} should return HTTP 200 with offer'() {
+        given:
+        mockedGetOffer()
+
+        when:
+        def response = restClient.when().get('/api/offers/' + OfferData.OFFER_ID)
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().as(OfferRequest) == OfferData.OFFER_REQUEST
+    }
+
+    void mockedGetOffer() {
+        mockedOfferService.getOffer(OfferData.OFFER_ID) >> OfferData.OFFER_REQUEST
+    }
+
+    @TestConfiguration
+    @ComponentScan
+    static class StubConfig {
+        DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
+
+        @Bean
+        OfferService offerService() {
+            return detachedMockFactory.Stub(OfferService)
+        }
+    }
+}
