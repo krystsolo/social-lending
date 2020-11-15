@@ -1,8 +1,7 @@
-package pl.fintech.dragons.dragonslending.offer
+package pl.fintech.dragons.dragonslending.auction
 
 import io.restassured.RestAssured
 import io.restassured.specification.RequestSpecification
-import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration
@@ -14,11 +13,9 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Primary
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import pl.fintech.dragons.dragonslending.offer.OfferService
-import pl.fintech.dragons.dragonslending.offer.dto.OfferRequest
+import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -33,13 +30,13 @@ import spock.mock.DetachedMockFactory
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebMvc
 @ActiveProfiles("integration-test")
-class OfferControllerIT extends Specification {
+class AuctionControllerIT extends Specification {
 
     @LocalServerPort
     int serverPort
 
     @Autowired
-    OfferService mockedOfferService
+    AuctionService mockedAuctionService
 
     RequestSpecification restClient
 
@@ -51,21 +48,21 @@ class OfferControllerIT extends Specification {
                 .log().all()
     }
 
-    def 'GET /api/offers/{id} should return HTTP 200 with offer'() {
+    def 'GET /api/auctions/{id} should return HTTP 200 with auction'() {
         given:
-        mockedGetOffer()
+        mockedGetAuction()
 
         when:
-        def response = restClient.when().get('/api/offers/' + OfferData.OFFER_ID)
+        def response = restClient.when().get('/api/auctions/' + AuctionData.AUCTION_ID)
 
         then:
         response.statusCode() == 200
         and:
-        response.body().as(OfferRequest) == OfferData.OFFER_REQUEST
+        response.body().as(AuctionRequest) == AuctionData.AUCTION_REQUEST
     }
 
-    void mockedGetOffer() {
-        mockedOfferService.getOffer(OfferData.OFFER_ID) >> OfferData.OFFER_REQUEST
+    void mockedGetAuction() {
+        mockedAuctionService.getAuction(AuctionData.AUCTION_ID) >> AuctionData.AUCTION_REQUEST
     }
 
     @TestConfiguration
@@ -74,8 +71,8 @@ class OfferControllerIT extends Specification {
         DetachedMockFactory detachedMockFactory = new DetachedMockFactory()
 
         @Bean
-        OfferService offerService() {
-            return detachedMockFactory.Stub(OfferService)
+        AuctionService auctionService() {
+            return detachedMockFactory.Stub(AuctionService)
         }
     }
 }

@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.offer.dto;
+package pl.fintech.dragons.dragonslending.auction.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @Value
-public class OfferQueryDto {
+public class AuctionQueryDto {
   UUID id;
   BigDecimal loanAmount;
   Integer timePeriod;

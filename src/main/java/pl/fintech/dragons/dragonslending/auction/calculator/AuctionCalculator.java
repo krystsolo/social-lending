@@ -1,16 +1,16 @@
-package pl.fintech.dragons.dragonslending.offer.calculator;
+package pl.fintech.dragons.dragonslending.auction.calculator;
 
-import pl.fintech.dragons.dragonslending.offer.Offer;
-import pl.fintech.dragons.dragonslending.offer.dto.CalculationDto;
+import pl.fintech.dragons.dragonslending.auction.Auction;
+import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class OfferCalculator {
+public class AuctionCalculator {
 
   private static final double FEE_RATE = 0.02;
 
-  public CalculationDto calculate(Offer entity) {
+  public CalculationDto calculate(Auction entity) {
 
     BigDecimal finalValue = entity.getLoanAmount()
         .add(entity.getLoanAmount()

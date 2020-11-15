@@ -1,7 +1,6 @@
-package pl.fintech.dragons.dragonslending.offer.dto;
+package pl.fintech.dragons.dragonslending.auction.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @Value
-public class OfferRequest {
+public class AuctionRequest {
   UUID id;
 
   @NotNull

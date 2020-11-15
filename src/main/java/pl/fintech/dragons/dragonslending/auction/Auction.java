@@ -1,8 +1,8 @@
-package pl.fintech.dragons.dragonslending.offer;
+package pl.fintech.dragons.dragonslending.auction;
 
 import lombok.*;
-import pl.fintech.dragons.dragonslending.offer.dto.CalculationDto;
-import pl.fintech.dragons.dragonslending.offer.dto.OfferQueryDto;
+import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
+import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +14,12 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "offer")
+@Table(name = "auction")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Offer {
+public class Auction {
 
   @Id
   private UUID id;
@@ -49,7 +49,7 @@ public class Offer {
   @Column(name = "user_id")
   UUID userId;
 
-  Offer(BigDecimal loanAmount, Integer timePeriod, Float interestRate,@NonNull LocalDate endDate, UUID userId) {
+  Auction(BigDecimal loanAmount, Integer timePeriod, Float interestRate, @NonNull LocalDate endDate, UUID userId) {
     this.id = UUID.randomUUID();
     this.loanAmount = loanAmount;
     this.timePeriod = timePeriod;
@@ -65,15 +65,15 @@ public class Offer {
     this.endDate = endDate;
   }
 
-  void changeOfferParameters(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate) {
+  void changeAuctionParameters(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate) {
     this.loanAmount = loanAmount;
     this.timePeriod = timePeriod;
     this.interestRate = interestRate;
     setEndDate(endDate);
   }
 
-  public OfferQueryDto toOfferQueryDto(CalculationDto calculationDto, String username) {
-    return OfferQueryDto.builder()
+  public AuctionQueryDto toAuctionDto(CalculationDto calculationDto, String username) {
+    return AuctionQueryDto.builder()
         .id(this.id)
         .loanAmount(this.loanAmount)
         .timePeriod(this.timePeriod)
