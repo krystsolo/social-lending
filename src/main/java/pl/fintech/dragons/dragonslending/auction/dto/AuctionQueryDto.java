@@ -1,14 +1,12 @@
 package pl.fintech.dragons.dragonslending.auction.dto;
 
 import lombok.Builder;
-import lombok.Getter;
 import lombok.Value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Getter
 @Builder
 @Value
 public class AuctionQueryDto {

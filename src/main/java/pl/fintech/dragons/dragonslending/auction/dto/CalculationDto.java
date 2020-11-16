@@ -1,15 +1,13 @@
 package pl.fintech.dragons.dragonslending.auction.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Value;
 
 import java.math.BigDecimal;
 
 @Builder
-@Getter
-@AllArgsConstructor
+@Value
 public class CalculationDto {
-  private BigDecimal finalValue;
-  private BigDecimal periodValue;
+  BigDecimal finalValue;
+  BigDecimal periodValue;
 }
