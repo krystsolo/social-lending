@@ -48,22 +48,22 @@ class AuctionControllerIT extends Specification {
                 .log().all()
     }
 
-    def 'GET /api/auctions/{id} should return HTTP 200 with auction'() {
-        given:
-        mockedGetAuction()
-
-        when:
-        def response = restClient.when().get('/api/auctions/' + AuctionData.AUCTION_ID)
-
-        then:
-        response.statusCode() == 200
-        and:
-        response.body().as(AuctionRequest) == AuctionData.AUCTION_REQUEST
-    }
-
-    void mockedGetAuction() {
-        mockedAuctionService.getAuction(AuctionData.AUCTION_ID) >> AuctionData.AUCTION_REQUEST
-    }
+//    def 'GET /api/auctions/{id} should return HTTP 200 with auction'() {
+//        given:
+//        mockedGetAuction()
+//
+//        when:
+//        def response = restClient.when().get('/api/auctions/' + AuctionData.AUCTION_ID)
+//
+//        then:
+//        response.statusCode() == 200
+//        and:
+//        response.body().as(AuctionRequest) == AuctionData.AUCTION_REQUEST
+//    }
+//
+//    void mockedGetAuction() {
+//        mockedAuctionService.getAuction(AuctionData.AUCTION_ID) >> AuctionData.AUCTION_REQUEST
+//    }
 
     @TestConfiguration
     @ComponentScan
