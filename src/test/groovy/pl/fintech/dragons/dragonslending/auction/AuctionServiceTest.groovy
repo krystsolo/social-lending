@@ -3,6 +3,7 @@ package pl.fintech.dragons.dragonslending.auction
 import pl.fintech.dragons.dragonslending.auction.calculator.AuctionCalculator
 import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto
 import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest
+import pl.fintech.dragons.dragonslending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.identity.application.UserDto
 import pl.fintech.dragons.dragonslending.identity.application.UserService
 import spock.lang.Specification
@@ -10,8 +11,6 @@ import spock.lang.Specification
 import java.nio.file.AccessDeniedException
 
 import static pl.fintech.dragons.dragonslending.auction.AuctionFixture.*
-import static pl.fintech.dragons.dragonslending.identity.UserFixture.getUSER_DTO
-import static pl.fintech.dragons.dragonslending.identity.UserFixture.getUSER_ID
 
 class AuctionServiceTest extends Specification {
     AuctionRepository auctionRepository = Mock(AuctionRepository)
@@ -29,12 +28,12 @@ class AuctionServiceTest extends Specification {
         def auctionQueryDto = auctionService.getAuction(AUCTION_ID)
 
         then:
-        auctionQueryDto == AUCTION.toAuctionDto(CALCULATION_DTO, USER_DTO.username)
+        auctionQueryDto == AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)
     }
 
     def "should return list of auctionQueryDto"() {
         given:
-        List<AuctionQueryDto> auctionList = [AUCTION.toAuctionDto(CALCULATION_DTO, USER_DTO.username), AUCTION.toAuctionDto(CALCULATION_DTO, USER_DTO.username)]
+        List<AuctionQueryDto> auctionList = [AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username), AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
         mockUserById()
         mockRepositoryFindAll()
         mockAuctionCalculator()
@@ -114,10 +113,10 @@ class AuctionServiceTest extends Specification {
     }
 
     void mockUserById() {
-        userService.getUser(USER_ID) >> USER_DTO
+        userService.getUser(UserFixture.USER_ID) >> UserFixture.USER_DTO
     }
 
     void mockCurrentLoggedUser() {
-        userService.getCurrentLoggedUser() >> USER_DTO
+        userService.getCurrentLoggedUser() >> UserFixture.USER_DTO
     }
 }
