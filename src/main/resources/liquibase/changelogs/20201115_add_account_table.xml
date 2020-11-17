@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="krystiansoloducha" id="20201115_add_account_table">
+        <createTable tableName="account">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="account_number" type="UUID">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="balance" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="frozen_amount" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="krystiansoloducha" id="20201115_add_account_user_id_FK">
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="account"
+                                 constraintName="fk_account_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_profile"/>
+    </changeSet>
+</databaseChangeLog>

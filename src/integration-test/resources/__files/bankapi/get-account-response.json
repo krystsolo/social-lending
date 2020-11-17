@@ -1,0 +1,28 @@
+{
+    "name": "id",
+    "number": "c425aedc-f260-4a5c-81e0-8da3c124710c",
+    "transactions": [
+        {
+            "id": 99,
+            "type": "CREDIT",
+            "amount": 500,
+            "referenceId": "91ecd9f3-fbf5-45b5-afc9-f64afc3dbc40",
+            "timestamp": "2020-11-15T11:20:49.133224Z"
+        },
+        {
+            "id": 98,
+            "type": "DEBIT",
+            "amount": 1000,
+            "referenceId": "69ea77b0-ea67-4dfe-aeff-e7555c50ba4c",
+            "timestamp": "2020-11-15T11:20:11.695046Z"
+        },
+        {
+            "id": 101,
+            "type": "CREDIT",
+            "amount": 250,
+            "referenceId": "aefece48-8c34-4ff5-b6db-775e86ad3864",
+            "timestamp": "2020-11-15T11:22:12.799889Z"
+        }
+    ],
+    "accountBalance": 250
+}

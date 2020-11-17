@@ -1,0 +1,32 @@
+[
+    {
+        "moduleId": 1,
+        "moduleName": "{\"en\":\"mod 1\",\"de\":\"mod 1\"}",
+        "questionnaireId": 1,
+        "questionnaireName": "{\"en\":\"questionnaire1\",\"de\":\"questionnaire1\"}"
+    },
+    {
+        "moduleId": 2,
+        "moduleName": "{\"en\":\"Privacy by Design (EN)\",\"de\":\"Privacy by Design (EN)\"}",
+        "questionnaireId": 2,
+        "questionnaireName": "{\"en\":\"pbd\",\"de\":\"pbd\"}"
+    },
+    {
+        "moduleId": 3,
+        "moduleName": "{\"en\":\"Test Module 1\",\"de\":\"Test Module 1\"}",
+        "questionnaireId": 3,
+        "questionnaireName": "{\"en\":\"Test Questionnaire 1\",\"de\":\"Test Questionnaire 1\"}"
+    },
+    {
+        "moduleId": 4,
+        "moduleName": "{\"en\":\"Test Module 2\",\"de\":\"Test Module 2\"}",
+        "questionnaireId": 4,
+        "questionnaireName": "{\"en\":\"Test Questionnaire 2\",\"de\":\"Test Questionnaire 2\"}"
+    },
+    {
+        "moduleId": 1,
+        "moduleName": "{\"en\":\"mod 1\",\"de\":\"mod 1\"}",
+        "questionnaireId": 7,
+        "questionnaireName": "{\"en\":\"test_quest\"}"
+    }
+]
