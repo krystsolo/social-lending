@@ -2,12 +2,12 @@ package pl.fintech.dragons.dragonslending.auction;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import pl.fintech.dragons.dragonslending.identity.application.UserDto;
-import pl.fintech.dragons.dragonslending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.auction.calculator.AuctionCalculator;
-import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
 import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto;
 import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest;
+import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
+import pl.fintech.dragons.dragonslending.identity.application.UserDto;
+import pl.fintech.dragons.dragonslending.identity.application.UserService;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -33,7 +33,31 @@ public class AuctionService {
   }
 
   @Transactional(readOnly = true)
-  public List<AuctionQueryDto> getAuctions() {
+  public List<AuctionQueryDto> getNotYourAuctions() {
+    return auctionRepository
+        .findAllByUserIdIsNot(userService.getCurrentLoggedUser().getId())
+        .stream()
+        .map(e -> e.toAuctionDto(
+            auctionCalculator.calculate(e),
+            userService.getUser(e.getUserId()).getUsername())
+        )
+        .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
+  public List<AuctionQueryDto> getYourAuctions() {
+    return auctionRepository
+        .findAllByUserId(userService.getCurrentLoggedUser().getId())
+        .stream()
+        .map(e -> e.toAuctionDto(
+            auctionCalculator.calculate(e),
+            userService.getUser(e.getUserId()).getUsername())
+        )
+        .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
+  public List<AuctionQueryDto> getPublicAuctions() {
     return auctionRepository
         .findAll()
         .stream()
@@ -76,5 +100,9 @@ public class AuctionService {
     );
 
     return auction.getId();
+  }
+
+  public void deleteAuction(UUID auctionId) {
+    auctionRepository.deleteById(auctionId);
   }
 }

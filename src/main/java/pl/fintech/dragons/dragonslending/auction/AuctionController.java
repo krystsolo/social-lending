@@ -35,11 +35,22 @@ class AuctionController {
     return auctionService.getAuction(id);
   }
 
-  @Operation(summary = "Get list of auctions")
+  @Operation(summary = "Get list of auctions when user is logged in")
   @GetMapping("/auctions")
-  List<AuctionQueryDto> getAuctions() {
+  List<AuctionQueryDto> getAuctions(@RequestParam(required = false, defaultValue = "false") String yours) {
+    log.debug("REST request to get list of auctions when user is logged in");
+    if(yours.equals("true")) {
+      return auctionService.getYourAuctions();
+    } else {
+      return auctionService.getNotYourAuctions();
+    }
+  }
+
+  @Operation(summary = "Get list of all auctions")
+  @GetMapping("/auctions/public")
+  List<AuctionQueryDto> getPublicAuctions() {
     log.debug("REST request to get list of auctions");
-    return auctionService.getAuctions();
+    return auctionService.getPublicAuctions();
   }
 
   @Operation(summary = "Save auction")
@@ -60,5 +71,12 @@ class AuctionController {
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, auctionId.toString()))
         .body(auctionId);
+  }
+
+  @Operation(summary = "Delete auction by id")
+  @DeleteMapping("/auctions/{id}")
+  void deleteAuction(@PathVariable UUID id) {
+    log.debug("REST request to delete Auction by id: {}", id);
+    auctionService.deleteAuction(id);
   }
 }

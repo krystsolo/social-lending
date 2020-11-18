@@ -18,7 +18,7 @@ class AuctionServiceTest extends Specification {
     UserService userService = Mock(UserService)
     AuctionService auctionService = new AuctionService(auctionRepository, auctionCalculator, userService)
 
-    def "should get auctionQueryDto by id"() {
+    def "should get auction by id"() {
         given:
         mockUserById()
         mockRepositoryGetOne()
@@ -31,15 +31,16 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto == AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)
     }
 
-    def "should return list of auctionQueryDto"() {
+    def "should return list of all auctions"() {
         given:
-        List<AuctionQueryDto> auctionList = [AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username), AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
         mockUserById()
-        mockRepositoryFindAll()
         mockAuctionCalculator()
+        List<AuctionQueryDto> auctionList = [AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username),
+                                             AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
+        auctionRepository.findAll() >> AUCTION_LIST
 
         when:
-        def auctionQueryDto = auctionService.getAuctions()
+        def auctionQueryDto = auctionService.getPublicAuctions()
 
         then:
         auctionQueryDto == auctionList
@@ -47,6 +48,43 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto.size() == 2
     }
 
+    def "should return list of all user auctions"() {
+        given:
+        mockCurrentLoggedUser()
+        mockAuctionCalculator()
+        List<AuctionQueryDto> auctionList = [
+                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username),
+                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
+        auctionRepository.findAllByUserId(UserFixture.USER_ID) >> AUCTION_LIST
+        userService.getUser(UserFixture.USER_ID) >> UserFixture.USER_DTO
+
+        when:
+        def auctionQueryDto = auctionService.getYourAuctions()
+
+        then:
+        auctionQueryDto == auctionList
+        and:
+        auctionQueryDto.size() == 2
+    }
+
+    def "should return list of all auctions without user auctions"() {
+        given:
+        mockCurrentLoggedUser()
+        mockAuctionCalculator()
+        List<AuctionQueryDto> auctionList = [
+                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username),
+                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
+        auctionRepository.findAllByUserIdIsNot(UserFixture.USER_ID) >> AUCTION_LIST
+        userService.getUser(UserFixture.USER_ID) >> UserFixture.USER_DTO
+
+        when:
+        def auctionQueryDto = auctionService.getNotYourAuctions()
+
+        then:
+        auctionQueryDto == auctionList
+        and:
+        auctionQueryDto.size() == 2
+    }
 
     def "should create new auction"() {
         given:
@@ -102,10 +140,6 @@ class AuctionServiceTest extends Specification {
 
     void mockRepositoryGetOne() {
         auctionRepository.getOne(AUCTION_ID) >> AUCTION
-    }
-
-    void mockRepositoryFindAll() {
-        auctionRepository.findAll() >> AUCTION_LIST
     }
 
     void mockAuctionCalculator() {

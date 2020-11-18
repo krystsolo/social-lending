@@ -7,7 +7,9 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
 import pl.fintech.dragons.dragonslending.identity.UserData
+import pl.fintech.dragons.dragonslending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.identity.application.UserService
+import pl.fintech.dragons.dragonslending.identity.application.web.UserRegisterRequest
 import pl.fintech.dragons.dragonslending.identity.infrastructure.UserConfig
 import pl.fintech.dragons.dragonslending.auction.config.AuctionConfig
 import spock.lang.Subject
@@ -109,7 +111,80 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         }
     }
 
+    def 'Should return list of all auctions by user id'() {
+        given:
+        UUID userUUID = addUserToDb()
+        UUID secondUserUUID = addSecondUserToDb()
+        Auction auction1 = repository.save(
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+        repository.save(
+                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionData.DATE, secondUserUUID))
+
+
+        when:
+        def fromDb = repository.findAllByUserId(userUUID)
+
+        then:
+        fromDb.size() == 1
+
+        and:
+        with(fromDb.first()) {
+            id == auction1.id
+            loanAmount == auction1.loanAmount
+            timePeriod == auction1.timePeriod
+            interestRate == auction1.interestRate
+            endDate == auction1.endDate
+            userId == auction1.userId
+        }
+    }
+
+    def 'Should return list of all auctions without auction with user id'() {
+        given:
+        UUID userUUID = addUserToDb()
+        UUID secondUserUUID = addSecondUserToDb()
+        Auction auction1 = repository.save(
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+        Auction auction2 = repository.save(
+                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionData.DATE, secondUserUUID)
+        )
+
+
+        when:
+        def fromDb = repository.findAllByUserIdIsNot(userUUID)
+
+        then:
+        fromDb.size() == 1
+
+        and:
+        with(fromDb.first()) {
+            id == auction2.id
+            loanAmount == auction2.loanAmount
+            timePeriod == auction2.timePeriod
+            interestRate == auction2.interestRate
+            endDate == auction2.endDate
+            userId == auction2.userId
+        }
+    }
+
+    def "Should delete auction by id"() {
+        given:
+        UUID userUUID = addUserToDb()
+        Auction auction = repository.save(
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+
+        when:
+        repository.deleteById(auction.id)
+        def foundAuction = repository.findById(auction.id)
+
+        then:
+        foundAuction.empty
+    }
+
     UUID addUserToDb() {
         return userService.register(UserData.USER_REGISTER_REQUEST)
+    }
+
+    UUID addSecondUserToDb() {
+        UUID secondUser = userService.register(new UserRegisterRequest("email@email.pl", "string", "string", "string", "string"))
     }
 }
