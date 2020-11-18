@@ -60,7 +60,7 @@ class AuctionServiceTest extends Specification {
         userService.getUser(UserFixture.USER_ID) >> UserFixture.USER_DTO
 
         when:
-        def auctionQueryDto = auctionService.getYourAuctions()
+        def auctionQueryDto = auctionService.getCurrentUserAuctions()
 
         then:
         auctionQueryDto == auctionList
@@ -79,7 +79,7 @@ class AuctionServiceTest extends Specification {
         userService.getUser(UserFixture.USER_ID) >> UserFixture.USER_DTO
 
         when:
-        def auctionQueryDto = auctionService.getNotYourAuctions()
+        def auctionQueryDto = auctionService.getAllNotCurrentUserAuctions()
 
         then:
         auctionQueryDto == auctionList

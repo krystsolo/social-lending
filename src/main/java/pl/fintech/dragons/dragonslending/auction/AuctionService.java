@@ -33,42 +33,24 @@ public class AuctionService {
   }
 
   @Transactional(readOnly = true)
-  public List<AuctionQueryDto> getNotYourAuctions() {
-    return auctionRepository
-        .findAllByUserIdIsNot(userService.getCurrentLoggedUser().getId())
-        .stream()
-        .map(e -> e.toAuctionDto(
-            auctionCalculator.calculate(e),
-            userService.getUser(e.getUserId()).getUsername())
-        )
-        .collect(Collectors.toList());
+  public List<AuctionQueryDto> getAllNotCurrentUserAuctions() {
+    return mapAuctionListToDto(auctionRepository
+        .findAllByUserIdIsNot(userService.getCurrentLoggedUser().getId()));
   }
 
   @Transactional(readOnly = true)
-  public List<AuctionQueryDto> getYourAuctions() {
-    return auctionRepository
-        .findAllByUserId(userService.getCurrentLoggedUser().getId())
-        .stream()
-        .map(e -> e.toAuctionDto(
-            auctionCalculator.calculate(e),
-            userService.getUser(e.getUserId()).getUsername())
-        )
-        .collect(Collectors.toList());
+  public List<AuctionQueryDto> getCurrentUserAuctions() {
+    return mapAuctionListToDto(auctionRepository
+        .findAllByUserId(userService.getCurrentLoggedUser().getId()));
   }
 
   @Transactional(readOnly = true)
   public List<AuctionQueryDto> getPublicAuctions() {
-    return auctionRepository
-        .findAll()
-        .stream()
-        .map(e -> e.toAuctionDto(
-            auctionCalculator.calculate(e),
-            userService.getUser(e.getUserId()).getUsername())
-        )
-        .collect(Collectors.toList());
+    return mapAuctionListToDto(auctionRepository
+        .findAll());
   }
 
-  public UUID saveAuctionDto(AuctionRequest dto) {
+  UUID saveAuctionDto(AuctionRequest dto) {
     Auction def = new Auction(
         dto.getLoanAmount(),
         dto.getTimePeriod(),
@@ -81,7 +63,7 @@ public class AuctionService {
     return def.getId();
   }
 
-  public UUID updateAuctionDto(AuctionRequest dto) throws AccessDeniedException {
+  UUID updateAuctionDto(AuctionRequest dto) throws AccessDeniedException {
     if (dto.getId() == null) {
       throw new IllegalArgumentException("Object cannot be updated, id is null");
     }
@@ -102,10 +84,20 @@ public class AuctionService {
     return auction.getId();
   }
 
-  public void deleteAuction(UUID auctionId) throws AccessDeniedException {
-    if(userService.getCurrentLoggedUser().getId() != auctionRepository.getOne(auctionId).userId) {
+  void deleteAuction(UUID auctionId) throws AccessDeniedException {
+    if (userService.getCurrentLoggedUser().getId() != auctionRepository.getOne(auctionId).userId) {
       throw new AccessDeniedException("You don't habe permission to delete this auction");
     }
     auctionRepository.deleteById(auctionId);
+  }
+
+  private List<AuctionQueryDto> mapAuctionListToDto(List<Auction> auctions) {
+    return auctions
+        .stream()
+        .map(e -> e.toAuctionDto(
+            auctionCalculator.calculate(e),
+            userService.getUser(e.getUserId()).getUsername())
+        )
+        .collect(Collectors.toList());
   }
 }
