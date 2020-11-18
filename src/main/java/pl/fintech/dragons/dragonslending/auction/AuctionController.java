@@ -75,7 +75,7 @@ class AuctionController {
 
   @Operation(summary = "Delete auction by id")
   @DeleteMapping("/auctions/{id}")
-  void deleteAuction(@PathVariable UUID id) {
+  void deleteAuction(@PathVariable UUID id) throws AccessDeniedException {
     log.debug("REST request to delete Auction by id: {}", id);
     auctionService.deleteAuction(id);
   }

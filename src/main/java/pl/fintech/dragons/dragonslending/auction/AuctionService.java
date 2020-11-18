@@ -102,7 +102,10 @@ public class AuctionService {
     return auction.getId();
   }
 
-  public void deleteAuction(UUID auctionId) {
+  public void deleteAuction(UUID auctionId) throws AccessDeniedException {
+    if(userService.getCurrentLoggedUser().getId() != auctionRepository.getOne(auctionId).userId) {
+      throw new AccessDeniedException("You don't habe permission to delete this auction");
+    }
     auctionRepository.deleteById(auctionId);
   }
 }

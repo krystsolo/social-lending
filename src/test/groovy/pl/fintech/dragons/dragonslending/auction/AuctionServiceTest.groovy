@@ -11,6 +11,7 @@ import spock.lang.Specification
 import java.nio.file.AccessDeniedException
 
 import static pl.fintech.dragons.dragonslending.auction.AuctionFixture.*
+import static pl.fintech.dragons.dragonslending.auction.AuctionFixture.AUCTION
 
 class AuctionServiceTest extends Specification {
     AuctionRepository auctionRepository = Mock(AuctionRepository)
@@ -18,7 +19,7 @@ class AuctionServiceTest extends Specification {
     UserService userService = Mock(UserService)
     AuctionService auctionService = new AuctionService(auctionRepository, auctionCalculator, userService)
 
-    def "should get auction by id"() {
+    def "Should get auction by id"() {
         given:
         mockUserById()
         mockRepositoryGetOne()
@@ -31,7 +32,7 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto == AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)
     }
 
-    def "should return list of all auctions"() {
+    def "Should return list of all auctions"() {
         given:
         mockUserById()
         mockAuctionCalculator()
@@ -48,7 +49,7 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto.size() == 2
     }
 
-    def "should return list of all user auctions"() {
+    def "Should return list of all user auctions"() {
         given:
         mockCurrentLoggedUser()
         mockAuctionCalculator()
@@ -67,7 +68,7 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto.size() == 2
     }
 
-    def "should return list of all auctions without user auctions"() {
+    def "Should return list of all auctions without user auctions"() {
         given:
         mockCurrentLoggedUser()
         mockAuctionCalculator()
@@ -86,7 +87,7 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto.size() == 2
     }
 
-    def "should create new auction"() {
+    def "Should create new auction"() {
         given:
         mockCurrentLoggedUser()
 
@@ -97,7 +98,7 @@ class AuctionServiceTest extends Specification {
         auctionId != null
     }
 
-    def "should update auction"() {
+    def "Should update auction"() {
         given:
         mockCurrentLoggedUser()
         mockRepositoryGetOne()
@@ -109,7 +110,7 @@ class AuctionServiceTest extends Specification {
         auctionId != null
     }
 
-    def "should throw illegal argument exception during update auction when auction id is null"() {
+    def "Should throw illegal argument exception during update auction when auction id is null"() {
         given:
         AuctionRequest auctionRequest = AuctionRequest.builder()
                 .loanAmount(AUCTION_REQUEST.loanAmount)
@@ -125,7 +126,7 @@ class AuctionServiceTest extends Specification {
         thrown(IllegalArgumentException)
     }
 
-    def "should throw access denied exception during update auction when this auction is not assign to current logged user"() {
+    def "Should throw access denied exception during update auction when this auction is not assign to current logged user"() {
         given:
         mockRepositoryGetOne()
         userService.getCurrentLoggedUser() >> UserDto.builder().id(UUID.randomUUID()).build()
@@ -136,6 +137,35 @@ class AuctionServiceTest extends Specification {
         then:
         thrown(AccessDeniedException)
     }
+
+
+    def "Should delete auction"() {
+        given:
+        mockRepositoryGetOne()
+        userService.getCurrentLoggedUser() >> UserFixture.USER_DTO
+
+        when:
+        auctionService.deleteAuction(AUCTION_ID)
+
+
+        then:
+        1 * auctionRepository.deleteById(AUCTION_ID)
+    }
+
+
+    def "Should throw access denied exception during deleting auction when this auction is not assign to current logged user"() {
+        given:
+        mockRepositoryGetOne()
+        userService.getCurrentLoggedUser() >> UserDto.builder().id(UUID.randomUUID()).build()
+
+        when:
+        auctionService.deleteAuction(AUCTION_ID)
+
+        then:
+        thrown(AccessDeniedException)
+    }
+
+
 
 
     void mockRepositoryGetOne() {
