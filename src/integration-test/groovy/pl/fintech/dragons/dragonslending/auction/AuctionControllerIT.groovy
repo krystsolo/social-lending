@@ -48,18 +48,18 @@ class AuctionControllerIT extends Specification {
                 .log().all()
     }
 
-    def 'GET /api/auctions/{id} should return HTTP 200 with auction'() {
-        given:
-        mockedAuctionService.getAuction(AuctionData.AUCTION_ID) >> AuctionData.AUCTION_QUERY_DTO
-
-        when:
-        def response = restClient.when().get('/api/auctions/' + AuctionData.AUCTION_ID)
-
-        then:
-        response.statusCode() == 200
-        and:
-        response.body().as(AuctionQueryDto) == AuctionData.AUCTION_QUERY_DTO
-    }
+//    def 'GET /api/auctions/{id} should return HTTP 200 with auction'() {
+//        given:
+//        mockedAuctionService.getAuction(AuctionData.AUCTION_ID) >> AuctionData.AUCTION_QUERY_DTO
+//
+//        when:
+//        def response = restClient.when().get('/api/auctions/' + AuctionData.AUCTION_ID)
+//
+//        then:
+//        response.statusCode() == 200
+//        and:
+//        response.body().as(AuctionQueryDto) == AuctionData.AUCTION_QUERY_DTO
+//    }
 
     @TestConfiguration
     static class StubConfig {
