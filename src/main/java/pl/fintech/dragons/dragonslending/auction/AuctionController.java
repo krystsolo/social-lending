@@ -39,7 +39,7 @@ class AuctionController {
   @GetMapping("/auctions")
   List<AuctionQueryDto> getAuctions(@RequestParam(required = false, defaultValue = "false") Boolean yours) {
     log.debug("REST request to get list of auctions when user is logged in");
-    if(!yours) {
+    if(yours) {
       return auctionService.getCurrentUserAuctions();
     } else {
       return auctionService.getAllNotCurrentUserAuctions();
