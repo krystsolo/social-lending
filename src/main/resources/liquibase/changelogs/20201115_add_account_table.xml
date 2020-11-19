@@ -12,9 +12,6 @@
             <column name="user_id" type="UUID">
                 <constraints nullable="false" unique="true" />
             </column>
-            <column name="account_number" type="UUID">
-                <constraints nullable="false" unique="true" />
-            </column>
             <column name="balance" type="DECIMAL(12, 2)">
                 <constraints nullable="false" />
             </column>

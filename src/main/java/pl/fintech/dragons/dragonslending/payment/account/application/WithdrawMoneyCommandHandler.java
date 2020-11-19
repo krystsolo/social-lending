@@ -8,6 +8,7 @@ import pl.fintech.dragons.dragonslending.payment.account.domain.Account;
 import pl.fintech.dragons.dragonslending.payment.account.domain.AccountRepository;
 import pl.fintech.dragons.dragonslending.payment.account.domain.BankApiService;
 import pl.fintech.dragons.dragonslending.payment.account.domain.MoneyTransferEvent.MoneyWithdrawn;
+import pl.fintech.dragons.dragonslending.payment.account.domain.SystemAccountNumber;
 import pl.fintech.dragons.dragonslending.security.AuthenticationFacade;
 
 import java.math.BigDecimal;
@@ -26,7 +27,11 @@ public class WithdrawMoneyCommandHandler {
         UUID userId = authenticationFacade.idOfCurrentLoggedUser();
         Account userAccount = accountRepository.getOne(userId);
         userAccount.withdraw(amount);
-        bankApiService.requestWithdraw(requestedAccountNumber, amount);
+        SystemAccountNumber systemAccountNumber = accountRepository.getSystemAccountNumber();
+        bankApiService.requestWithdraw(
+                systemAccountNumber.number(),
+                requestedAccountNumber,
+                amount);
         eventPublisher.publish(
                 MoneyWithdrawn.now(
                         userAccount.getId(),

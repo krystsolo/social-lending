@@ -18,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@ToString(exclude = "password")
 public class User {
 
     @Id

@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface BankApiService {
-    void requestWithdraw(UUID to, BigDecimal amount);
+    void requestWithdraw(UUID from, UUID to, BigDecimal amount);
 }

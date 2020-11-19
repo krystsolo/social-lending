@@ -1,6 +1,7 @@
 package pl.fintech.dragons.dragonslending.payment.account
 
 import pl.fintech.dragons.dragonslending.payment.account.domain.Account
+import pl.fintech.dragons.dragonslending.payment.account.domain.SystemAccountNumber
 
 class AccountFixtures {
 
@@ -13,4 +14,6 @@ class AccountFixtures {
     static final BigDecimal FROZEN_MONEY = BigDecimal.valueOf(200)
 
     static final Account ACCOUNT = new Account(ACCOUNT_ID, USER_ID, BALANCE, FROZEN_MONEY)
+
+    static final SystemAccountNumber SYSTEM_ACCOUNT_NUMBER = SystemAccountNumber.of(UUID.randomUUID())
 }

@@ -11,7 +11,7 @@
     <groupId>pl.fintech.dragons.dragonslending</groupId>
     <artifactId>dragons-lending-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo-app</name>
+    <name>dragons-lending-api</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

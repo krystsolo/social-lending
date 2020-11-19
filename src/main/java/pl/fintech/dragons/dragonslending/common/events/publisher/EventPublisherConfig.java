@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 
 @Configuration
-class EventPublisherConfig {
+public class EventPublisherConfig {
 
     @Bean
     EventPublisher eventPublisher(ApplicationEventPublisher applicationEventPublisher) {
