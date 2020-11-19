@@ -10,8 +10,7 @@ import spock.lang.Specification
 
 import java.nio.file.AccessDeniedException
 
-import static pl.fintech.dragons.dragonslending.auction.AuctionFixture.*
-import static pl.fintech.dragons.dragonslending.auction.AuctionFixture.AUCTION
+import static AuctionFixtureData.*
 
 class AuctionServiceTest extends Specification {
     AuctionRepository auctionRepository = Mock(AuctionRepository)

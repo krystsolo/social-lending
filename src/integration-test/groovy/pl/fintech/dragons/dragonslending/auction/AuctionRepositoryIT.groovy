@@ -7,7 +7,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
 import pl.fintech.dragons.dragonslending.identity.UserData
-import pl.fintech.dragons.dragonslending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.identity.application.UserService
 import pl.fintech.dragons.dragonslending.identity.application.web.UserRegisterRequest
 import pl.fintech.dragons.dragonslending.identity.infrastructure.UserConfig
@@ -34,7 +33,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def 'Should store new auction'() {
         given:
         UUID userUUID = addUserToDb()
-        def auction = new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID)
+        def auction = new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID)
 
         when:
         repository.save(auction)
@@ -58,7 +57,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         given:
         UUID userUUID = addUserToDb()
         Auction auction = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
 
         when:
         def fromDb = repository.getOne(auction.id)
@@ -78,9 +77,9 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         given:
         UUID userUUID = addUserToDb()
         Auction auction1 = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
         Auction auction2 = repository.save(
-                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionData.DATE, userUUID)
+                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, userUUID)
         )
 
 
@@ -116,9 +115,9 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         UUID userUUID = addUserToDb()
         UUID secondUserUUID = addSecondUserToDb()
         Auction auction1 = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
         repository.save(
-                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionData.DATE, secondUserUUID))
+                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, secondUserUUID))
 
 
         when:
@@ -143,9 +142,9 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         UUID userUUID = addUserToDb()
         UUID secondUserUUID = addSecondUserToDb()
         Auction auction1 = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
         Auction auction2 = repository.save(
-                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionData.DATE, secondUserUUID)
+                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, secondUserUUID)
         )
 
 
@@ -170,7 +169,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         given:
         UUID userUUID = addUserToDb()
         Auction auction = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionData.DATE, userUUID))
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
 
         when:
         repository.deleteById(auction.id)

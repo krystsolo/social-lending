@@ -1,6 +1,6 @@
 package pl.fintech.dragons.dragonslending.auction.calculator
 
-import pl.fintech.dragons.dragonslending.auction.AuctionFixture
+import pl.fintech.dragons.dragonslending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
 import spock.lang.Specification;
 
@@ -11,10 +11,10 @@ class AuctionCalculatorTest extends Specification {
     AuctionCalculator auctionCalculator = new AuctionCalculator();
 
     when:
-    CalculationDto calculationDto = auctionCalculator.calculate(AuctionFixture.AUCTION)
+    CalculationDto calculationDto = auctionCalculator.calculate(AuctionFixtureData.AUCTION)
 
     then:
-    calculationDto.finalValue == AuctionFixture.CALCULATION_DTO.finalValue
-    calculationDto.periodValue == AuctionFixture.CALCULATION_DTO.periodValue
+    calculationDto.finalValue == AuctionFixtureData.CALCULATION_DTO.finalValue
+    calculationDto.periodValue == AuctionFixtureData.CALCULATION_DTO.periodValue
   }
 }

@@ -6,7 +6,7 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 
-import static pl.fintech.dragons.dragonslending.auction.AuctionFixture.*
+import static AuctionFixtureData.*
 
 class AuctionTest extends Specification {
 

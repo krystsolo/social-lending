@@ -6,7 +6,7 @@ import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest
 
 import java.time.LocalDate
 
-class AuctionFixture {
+class AuctionFixtureData {
 
     static final UUID AUCTION_ID = UUID.randomUUID()
 
