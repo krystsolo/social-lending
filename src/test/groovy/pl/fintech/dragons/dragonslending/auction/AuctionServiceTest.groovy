@@ -49,7 +49,7 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto.size() == 2
     }
 
-    def "Should return list of all user auctions"() {
+    def "Should return list of all current logged user auctions"() {
         given:
         mockCurrentLoggedUser()
         mockAuctionCalculator()
@@ -68,7 +68,7 @@ class AuctionServiceTest extends Specification {
         auctionQueryDto.size() == 2
     }
 
-    def "Should return list of all auctions without user auctions"() {
+    def "Should return list of all auctions without current logged user auctions"() {
         given:
         mockCurrentLoggedUser()
         mockAuctionCalculator()

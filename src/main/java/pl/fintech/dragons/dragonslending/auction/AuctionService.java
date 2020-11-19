@@ -50,7 +50,7 @@ public class AuctionService {
         .findAll());
   }
 
-  UUID saveAuctionDto(AuctionRequest dto) {
+  public UUID saveAuctionDto(AuctionRequest dto) {
     Auction def = new Auction(
         dto.getLoanAmount(),
         dto.getTimePeriod(),
@@ -63,7 +63,7 @@ public class AuctionService {
     return def.getId();
   }
 
-  UUID updateAuctionDto(AuctionRequest dto) throws AccessDeniedException {
+  public UUID updateAuctionDto(AuctionRequest dto) throws AccessDeniedException {
     if (dto.getId() == null) {
       throw new IllegalArgumentException("Object cannot be updated, id is null");
     }
@@ -84,7 +84,7 @@ public class AuctionService {
     return auction.getId();
   }
 
-  void deleteAuction(UUID auctionId) throws AccessDeniedException {
+  public void deleteAuction(UUID auctionId) throws AccessDeniedException {
     if (userService.getCurrentLoggedUser().getId() != auctionRepository.getOne(auctionId).userId) {
       throw new AccessDeniedException("You don't habe permission to delete this auction");
     }

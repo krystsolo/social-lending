@@ -33,13 +33,13 @@ public class Auction {
   @Column(name = "time_period")
   @NotNull
   @Min(value = 1, message = "Time period value should not be less than 1")
-  @Max(value = 36, message = "Time period value should not be greater than 1000000")
+  @Max(value = 36, message = "Time period value should not be greater than 36")
   private Integer timePeriod;
 
   @Column(name = "interest_rate")
   @NotNull
   @Min(value = 0, message = "Time period value should not be less than 1")
-  @Max(value = 20, message = "Time period value should not be greater than 1000000")
+  @Max(value = 20, message = "Time period value should not be greater than 20")
   private Float interestRate;
 
   @Column(name = "end_date")
@@ -72,7 +72,7 @@ public class Auction {
     setEndDate(endDate);
   }
 
-  public AuctionQueryDto toAuctionDto(CalculationDto calculationDto, String username) {
+  AuctionQueryDto toAuctionDto(CalculationDto calculationDto, String username) {
     return AuctionQueryDto.builder()
         .id(this.id)
         .loanAmount(this.loanAmount)

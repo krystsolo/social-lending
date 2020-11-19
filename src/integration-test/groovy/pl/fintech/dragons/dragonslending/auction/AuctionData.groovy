@@ -16,4 +16,8 @@ class AuctionData {
 
     static final AuctionQueryDto AUCTION_QUERY_DTO = new AuctionQueryDto(
             AUCTION_ID, BigDecimal.valueOf(1000), 5, 3, DATE, new CalculationDto(BigDecimal.valueOf(1024.17), BigDecimal.valueOf(512.08)), UserData.USER_ID, UserData.USER.username)
+
+    static final Auction AUCTION = new Auction(BigDecimal.valueOf(1000), 2, 2.5, DATE, UserData.USER_ID)
+
+    static final List<AuctionQueryDto> AUCTION_QUERY_LIST = [AUCTION_QUERY_DTO, AUCTION_QUERY_DTO]
 }

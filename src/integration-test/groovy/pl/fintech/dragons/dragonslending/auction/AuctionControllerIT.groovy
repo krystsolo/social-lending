@@ -1,4 +1,3 @@
-
 package pl.fintech.dragons.dragonslending.auction
 
 import io.restassured.RestAssured
@@ -17,7 +16,13 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto
 import spock.lang.Specification
+import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
+
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotNull
+import java.time.LocalDate
 
 @SpringBootTest(
         classes = [
@@ -26,6 +31,7 @@ import spock.mock.DetachedMockFactory
                 ServletWebServerFactoryAutoConfiguration.class,
                 WebEndpointAutoConfiguration.class,
                 EndpointAutoConfiguration.class,
+                AuctionController.class
         ],
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebMvc
@@ -48,18 +54,119 @@ class AuctionControllerIT extends Specification {
                 .log().all()
     }
 
-//    def 'GET /api/auctions/{id} should return HTTP 200 with auction'() {
-//        given:
-//        mockedAuctionService.getAuction(AuctionData.AUCTION_ID) >> AuctionData.AUCTION_QUERY_DTO
-//
-//        when:
-//        def response = restClient.when().get('/api/auctions/' + AuctionData.AUCTION_ID)
-//
-//        then:
-//        response.statusCode() == 200
-//        and:
-//        response.body().as(AuctionQueryDto) == AuctionData.AUCTION_QUERY_DTO
-//    }
+    def 'GET /api/auctions/{id} should return HTTP 200 with auction'() {
+        given:
+        mockedAuctionService.getAuction(AuctionData.AUCTION_ID) >> AuctionData.AUCTION_QUERY_DTO
+
+        when:
+        def response = restClient.when().get('/api/auctions/' + AuctionData.AUCTION_ID)
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().as(AuctionQueryDto) == AuctionData.AUCTION_QUERY_DTO
+    }
+
+    def 'GET /api/auctions/public should return HTTP 200 with all auctions'() {
+        given:
+        mockedAuctionService.getPublicAuctions() >> AuctionData.AUCTION_QUERY_LIST
+
+        when:
+        def response = restClient.when().get('/api/auctions/public')
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class).size() == 2
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class) == AuctionData.AUCTION_QUERY_LIST
+    }
+
+    def 'GET /api/auctions should return HTTP 200 with auction without current logged user'() {
+        given:
+        mockedAuctionService.getAllNotCurrentUserAuctions() >> AuctionData.AUCTION_QUERY_LIST
+
+        when:
+        def response = restClient.when().get('/api/auctions')
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class).size() == 2
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class) == AuctionData.AUCTION_QUERY_LIST
+    }
+
+    def 'GET /api/auctions?yours=true should return HTTP 200 with current logged user auctions'() {
+        given:
+        mockedAuctionService.getCurrentUserAuctions() >> AuctionData.AUCTION_QUERY_LIST
+
+        when:
+        def response = restClient.when().get('/api/auctions?yours=true')
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class).size() == 2
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class) == AuctionData.AUCTION_QUERY_LIST
+    }
+
+    def 'POST /api/auctions should return HTTP 201 with auction id'() {
+        given:
+        mockedAuctionService.saveAuctionDto(AuctionData.AUCTION_REQUEST) >> AuctionData.AUCTION_ID
+
+        when:
+        def response = restClient.with().body(AuctionData.AUCTION_REQUEST).when().post('/api/auctions')
+
+        then:
+        response.statusCode() == 201
+        and:
+        response.body().as(UUID.class) == AuctionData.AUCTION_ID
+    }
+
+    def 'PUT /api/auctions/{id} should return HTTP 200 with auction id'() {
+        given:
+        mockedAuctionService.updateAuctionDto(AuctionData.AUCTION_REQUEST) >> AuctionData.AUCTION_ID
+
+        when:
+        def response = restClient.with().body(AuctionData.AUCTION_REQUEST).when().put('/api/auctions/' + AuctionData.AUCTION_ID)
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().as(UUID.class) == AuctionData.AUCTION_ID
+    }
+
+    def 'DELETE /api/auctions/{id} should return HTTP 200'() {
+        when:
+        def response = restClient.when().delete('/api/auctions/' + AuctionData.AUCTION_ID)
+
+        then:
+        response.statusCode() == 200
+    }
+
+    @Unroll
+    def 'POST /api/auctions should return HTTP 400 and not save new auction because of invalid auction data: #userMessage'() {
+        when:
+        def response = restClient.with().body(request).when().post('/api/auctions')
+
+        then:
+        response.statusCode() == 400
+
+        where:
+        request                                                               || userMessage
+        AuctionData.AUCTION_REQUEST.withLoanAmount(null)                      || 'Loan amount cannot be null.'
+        AuctionData.AUCTION_REQUEST.withLoanAmount(BigDecimal.valueOf(-1))    || 'Loan amount value should not be less then 0.'
+        AuctionData.AUCTION_REQUEST.withLoanAmount(BigDecimal.valueOf(10001)) || 'Loan amount value should not be greater than 10000.'
+        AuctionData.AUCTION_REQUEST.withTimePeriod(null)                      || 'Time period cannot be null.'
+        AuctionData.AUCTION_REQUEST.withTimePeriod(0)                         || 'Time period value should not be less than 1.'
+        AuctionData.AUCTION_REQUEST.withTimePeriod(37)                        || 'Time period value should not be greater than 36.'
+        AuctionData.AUCTION_REQUEST.withInterestRate(null)                    || 'Interest rate cannot be null.'
+        AuctionData.AUCTION_REQUEST.withInterestRate(-1)                      || 'Time period value should not be less than 1.'
+        AuctionData.AUCTION_REQUEST.withInterestRate(21)                      || 'Time period value should not be greater than 20.'
+        AuctionData.AUCTION_REQUEST.withEndDate(null)                         || 'End date cannot be null.'
+    }
 
     @TestConfiguration
     static class StubConfig {
