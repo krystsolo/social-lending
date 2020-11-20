@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.auction
+package pl.fintech.dragons.dragonslending.sociallending.auction
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -6,11 +6,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
-import pl.fintech.dragons.dragonslending.identity.UserData
-import pl.fintech.dragons.dragonslending.identity.application.UserService
-import pl.fintech.dragons.dragonslending.identity.application.web.UserRegisterRequest
-import pl.fintech.dragons.dragonslending.identity.infrastructure.UserConfig
-import pl.fintech.dragons.dragonslending.auction.config.AuctionConfig
+import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
+import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
+import pl.fintech.dragons.dragonslending.sociallending.identity.application.web.UserRegisterRequest
+import pl.fintech.dragons.dragonslending.sociallending.identity.infrastructure.UserConfig
+import pl.fintech.dragons.dragonslending.sociallending.auction.config.AuctionConfig
 import spock.lang.Subject
 
 @DataJpaTest

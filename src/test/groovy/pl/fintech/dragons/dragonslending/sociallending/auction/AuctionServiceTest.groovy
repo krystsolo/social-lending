@@ -1,11 +1,11 @@
-package pl.fintech.dragons.dragonslending.auction
+package pl.fintech.dragons.dragonslending.sociallending.auction
 
-import pl.fintech.dragons.dragonslending.auction.calculator.AuctionCalculator
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest
-import pl.fintech.dragons.dragonslending.identity.UserFixture
-import pl.fintech.dragons.dragonslending.identity.application.UserDto
-import pl.fintech.dragons.dragonslending.identity.application.UserService
+import pl.fintech.dragons.dragonslending.sociallending.auction.calculator.AuctionCalculator
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest
+import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
+import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto
+import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
 import spock.lang.Specification
 
 import java.nio.file.AccessDeniedException

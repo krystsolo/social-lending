@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.auction.dto;
+package pl.fintech.dragons.dragonslending.sociallending.auction.dto;
 
 import lombok.Builder;
 import lombok.Value;

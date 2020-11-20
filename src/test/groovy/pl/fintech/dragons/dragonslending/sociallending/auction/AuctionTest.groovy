@@ -1,7 +1,7 @@
-package pl.fintech.dragons.dragonslending.auction
+package pl.fintech.dragons.dragonslending.sociallending.auction
 
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto
-import pl.fintech.dragons.dragonslending.identity.UserFixture
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
+import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -29,15 +29,16 @@ class AuctionTest extends Specification {
     }
 
     def "should change auction parameters"() {
+        def id = UUID.randomUUID()
         given:
-        Auction auction = AUCTION
+        Auction auction = new Auction(id, BigDecimal.TEN, 2, 2 , LocalDate.now(), UUID.randomUUID())
         LocalDate date = LocalDate.now().plusDays(1)
 
         when:
         auction.changeAuctionParameters(BigDecimal.valueOf(2222), 5, 5, date);
 
         then:
-        auction.id == AUCTION.id
+        auction.id == id
         auction.loanAmount == BigDecimal.valueOf(2222)
         auction.timePeriod == 5
         auction.interestRate == 5

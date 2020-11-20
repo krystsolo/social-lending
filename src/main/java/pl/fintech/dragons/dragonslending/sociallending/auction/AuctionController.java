@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.auction;
+package pl.fintech.dragons.dragonslending.sociallending.auction;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.fintech.dragons.dragonslending.common.HeaderUtil;
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto;
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest;
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest;
 
 import javax.validation.Valid;
 import java.net.URI;

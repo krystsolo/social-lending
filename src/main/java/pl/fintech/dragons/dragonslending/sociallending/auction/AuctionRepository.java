@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.auction;
+package pl.fintech.dragons.dragonslending.sociallending.auction;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,10 +1,10 @@
-package pl.fintech.dragons.dragonslending.auction
+package pl.fintech.dragons.dragonslending.sociallending.auction
 
 import org.apache.commons.lang3.RandomUtils
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest
-import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto
-import pl.fintech.dragons.dragonslending.identity.UserData
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto
+import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
 
 import java.time.LocalDate
 

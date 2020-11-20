@@ -1,6 +1,5 @@
-package pl.fintech.dragons.dragonslending.auction.dto;
+package pl.fintech.dragons.dragonslending.sociallending.auction.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;

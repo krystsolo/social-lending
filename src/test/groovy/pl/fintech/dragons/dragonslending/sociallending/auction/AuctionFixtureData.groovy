@@ -1,8 +1,8 @@
-package pl.fintech.dragons.dragonslending.auction
+package pl.fintech.dragons.dragonslending.sociallending.auction
 
-import pl.fintech.dragons.dragonslending.identity.UserFixture
-import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionRequest
+import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest
 
 import java.time.LocalDate
 

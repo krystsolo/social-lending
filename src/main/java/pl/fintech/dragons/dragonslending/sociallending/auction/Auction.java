@@ -1,8 +1,8 @@
-package pl.fintech.dragons.dragonslending.auction;
+package pl.fintech.dragons.dragonslending.sociallending.auction;
 
 import lombok.*;
-import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto;
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto;
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

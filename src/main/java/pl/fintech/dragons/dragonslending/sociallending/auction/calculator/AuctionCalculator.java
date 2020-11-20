@@ -1,7 +1,7 @@
-package pl.fintech.dragons.dragonslending.auction.calculator;
+package pl.fintech.dragons.dragonslending.sociallending.auction.calculator;
 
-import pl.fintech.dragons.dragonslending.auction.Auction;
-import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
+import pl.fintech.dragons.dragonslending.sociallending.auction.Auction;
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

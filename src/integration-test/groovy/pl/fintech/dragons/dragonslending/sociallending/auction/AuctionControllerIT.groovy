@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.auction
+package pl.fintech.dragons.dragonslending.sociallending.auction
 
 import io.restassured.RestAssured
 import io.restassured.specification.RequestSpecification
@@ -14,7 +14,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import pl.fintech.dragons.dragonslending.auction.dto.AuctionQueryDto
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
 import spock.lang.Specification
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory

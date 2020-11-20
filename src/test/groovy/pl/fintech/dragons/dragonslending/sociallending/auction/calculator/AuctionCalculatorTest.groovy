@@ -1,7 +1,7 @@
-package pl.fintech.dragons.dragonslending.auction.calculator
+package pl.fintech.dragons.dragonslending.sociallending.auction.calculator
 
-import pl.fintech.dragons.dragonslending.auction.AuctionFixtureData
-import pl.fintech.dragons.dragonslending.auction.dto.CalculationDto;
+import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto;
 import spock.lang.Specification;
 
 class AuctionCalculatorTest extends Specification {
