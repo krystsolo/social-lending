@@ -1,8 +1,10 @@
 package pl.fintech.dragons.dragonslending.identity.application
 
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.identity.application.web.UserRegisterRequest
 import pl.fintech.dragons.dragonslending.identity.domain.User
 import pl.fintech.dragons.dragonslending.identity.domain.UserFactory
+import pl.fintech.dragons.dragonslending.identity.domain.UserRegistered
 import pl.fintech.dragons.dragonslending.identity.domain.UserRepository
 import pl.fintech.dragons.dragonslending.security.AuthenticationFromSecurityContextRetriever
 import spock.lang.Specification
@@ -13,7 +15,8 @@ class UserServiceTest extends Specification {
     UserFactory userFactory = Mock(UserFactory)
     UserRepository userRepository = Mock(UserRepository)
     AuthenticationFromSecurityContextRetriever authenticationFacade = Mock(AuthenticationFromSecurityContextRetriever)
-    UserService userService = new UserService(userFactory, userRepository, authenticationFacade)
+    EventPublisher eventPublisher = Mock(EventPublisher)
+    UserService userService = new UserService(userFactory, userRepository, authenticationFacade, eventPublisher)
 
     def "should get userDto by id"() {
         given:
@@ -50,6 +53,7 @@ class UserServiceTest extends Specification {
 
         then:
         id == USER_ID
+        1 * eventPublisher.publish(_ as UserRegistered)
     }
 
     void mockDatabase() {

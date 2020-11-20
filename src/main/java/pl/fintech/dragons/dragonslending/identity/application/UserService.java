@@ -3,9 +3,11 @@ package pl.fintech.dragons.dragonslending.identity.application;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.identity.application.web.UserRegisterRequest;
 import pl.fintech.dragons.dragonslending.identity.domain.User;
 import pl.fintech.dragons.dragonslending.identity.domain.UserFactory;
+import pl.fintech.dragons.dragonslending.identity.domain.UserRegistered;
 import pl.fintech.dragons.dragonslending.identity.domain.UserRepository;
 import pl.fintech.dragons.dragonslending.security.AuthenticationFacade;
 import pl.fintech.dragons.dragonslending.security.AuthenticationFromSecurityContextRetriever;
@@ -20,6 +22,7 @@ public class UserService {
     private final UserFactory userFactory;
     private final UserRepository repository;
     private final AuthenticationFacade authenticationFacade;
+    private final EventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public UserDto getUser(UUID id) {
@@ -30,7 +33,9 @@ public class UserService {
     public UUID register(UserRegisterRequest userRegisterRequest) {
         User user = userFactory.from(userRegisterRequest);
         user = repository.save(user);
-        return user.getId();
+        UUID userId = user.getId();
+        eventPublisher.publish(UserRegistered.now(userId));
+        return userId;
     }
 
     public UserDto getCurrentLoggedUser() {

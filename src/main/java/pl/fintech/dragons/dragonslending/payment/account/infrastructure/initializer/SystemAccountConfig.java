@@ -6,18 +6,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-import pl.fintech.dragons.dragonslending.identity.domain.User;
 import pl.fintech.dragons.dragonslending.identity.domain.UserRepository;
-import pl.fintech.dragons.dragonslending.payment.account.domain.Account;
 import pl.fintech.dragons.dragonslending.payment.account.domain.AccountRepository;
 import pl.fintech.dragons.dragonslending.payment.account.infrastructure.bankapi.BankApi;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.UUID;
 
 @Configuration
 @Slf4j

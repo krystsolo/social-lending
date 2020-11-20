@@ -28,7 +28,7 @@ public class Account {
     @Column(name = "frozen_amount")
     private BigDecimal frozenAmount;
 
-    Account(@NonNull UUID userId) {
+    public Account(@NonNull UUID userId) {
         this.id = UUID.randomUUID();
         this.balance = BigDecimal.ZERO;
         this.frozenAmount = BigDecimal.ZERO;

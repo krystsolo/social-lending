@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
+import pl.fintech.dragons.dragonslending.common.events.publisher.EventPublisherConfig;
 import pl.fintech.dragons.dragonslending.identity.application.UserDetailsProvider;
 import pl.fintech.dragons.dragonslending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.identity.domain.User;
@@ -18,7 +20,7 @@ import pl.fintech.dragons.dragonslending.security.AuthenticationFacade;
 @Configuration
 @EnableJpaRepositories(basePackageClasses = UserRepositoryAdapter.class, considerNestedRepositories = true)
 @EntityScan(basePackageClasses = User.class)
-@Import(AuthenticationConfig.class)
+@Import({AuthenticationConfig.class, EventPublisherConfig.class})
 public class UserConfig {
 
     @Bean
@@ -27,8 +29,13 @@ public class UserConfig {
     }
 
     @Bean
-    UserService userService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationFacade authenticationFacade) {
-        return new UserService(new UserFactory(passwordEncoder, userRepository), userRepository, authenticationFacade);
+    UserService userService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                            AuthenticationFacade authenticationFacade, EventPublisher eventPublisher) {
+        return new UserService(
+                new UserFactory(passwordEncoder, userRepository),
+                userRepository,
+                authenticationFacade,
+                eventPublisher);
     }
 
     @Bean
