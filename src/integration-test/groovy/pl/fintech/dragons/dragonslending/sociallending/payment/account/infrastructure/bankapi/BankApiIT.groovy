@@ -2,9 +2,10 @@ package pl.fintech.dragons.dragonslending.sociallending.payment.account.infrastr
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer
 import org.springframework.http.HttpHeaders
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-
 import pl.fintech.dragons.dragonslending.WireMockInitializer
 import spock.lang.Specification
 import spock.lang.Subject
@@ -13,8 +14,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*
 
 @ContextConfiguration(
         classes = [BankApiConfig],
-        initializers = [WireMockInitializer]
+        initializers = [WireMockInitializer, ConfigFileApplicationContextInitializer]
 )
+@ActiveProfiles("integration-test")
 class BankApiIT extends Specification {
 
     @Autowired

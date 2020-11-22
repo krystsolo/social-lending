@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.paymentplatformmock.client;
+package pl.fintech.dragons.dragonslending.common.client.bankapi;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;
