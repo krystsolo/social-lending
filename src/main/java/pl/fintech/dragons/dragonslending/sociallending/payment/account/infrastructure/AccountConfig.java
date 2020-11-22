@@ -19,8 +19,8 @@ import pl.fintech.dragons.dragonslending.sociallending.security.AuthenticationFa
 public class AccountConfig {
 
     @Bean
-    AccountFinder accountFinder(AccountRepository accountRepository) {
-        return new AccountFinder(accountRepository);
+    AccountFinder accountFinder(AccountRepository accountRepository, AuthenticationFacade authenticationFacade) {
+        return new AccountFinder(accountRepository,authenticationFacade);
     }
 
     @Bean
