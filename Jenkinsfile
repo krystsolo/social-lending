@@ -24,7 +24,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     script {
-                        sh "sonar-scanner -Dsonar.projectKey=ersa-team::dragons-lending-api -Dsonar.java.binaries=./target/classes"
+                        sh "sonar-scanner -Dsonar.projectKey=ersa-team::dragons-lending-api -Dsonar.java.binaries=target"
                     }
                 }
             }
