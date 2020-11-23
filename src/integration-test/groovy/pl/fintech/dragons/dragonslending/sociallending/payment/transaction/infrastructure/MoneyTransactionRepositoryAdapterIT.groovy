@@ -14,8 +14,8 @@ import spock.lang.Subject
 @DataJpaTest
 @ActiveProfiles("integration-test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(classes = [MoneyTransactionRepoConfig.class])
-class MoneyTransactionRepositoryAdapterTest extends PostgreSQLContainerSpecification {
+@ContextConfiguration(classes = [MoneyTransactionConfig.class])
+class MoneyTransactionRepositoryAdapterIT extends PostgreSQLContainerSpecification {
 
     @Subject
     @Autowired

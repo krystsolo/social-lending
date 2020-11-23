@@ -25,7 +25,7 @@ public class WithdrawMoneyCommandHandler {
 
     public void withdraw(@NonNull UUID requestedAccountNumber, @NonNull BigDecimal amount) {
         UUID userId = authenticationFacade.idOfCurrentLoggedUser();
-        Account userAccount = accountRepository.getOne(userId);
+        Account userAccount = accountRepository.getOneByUserId(userId);
         userAccount.withdraw(amount);
         SystemAccountNumber systemAccountNumber = accountRepository.getSystemAccountNumber();
         bankApiService.requestWithdraw(

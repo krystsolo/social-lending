@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.application.AccountFinder;
+import pl.fintech.dragons.dragonslending.sociallending.payment.account.application.MoneyDepositedFromExternalSourceEventHandler;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.application.UserRegisteredEventHandler;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.application.WithdrawMoneyCommandHandler;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.AccountRepository;
@@ -26,6 +27,11 @@ public class AccountConfig {
     @Bean
     UserRegisteredEventHandler userRegisteredEventHandler(AccountRepository accountRepository) {
         return new UserRegisteredEventHandler(accountRepository);
+    }
+
+    @Bean
+    MoneyDepositedFromExternalSourceEventHandler moneyDepositedFromExternalSourceEventHandler(EventPublisher eventPublisher, AccountRepository accountRepository) {
+        return new MoneyDepositedFromExternalSourceEventHandler(eventPublisher, accountRepository);
     }
 
     @Bean

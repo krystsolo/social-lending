@@ -26,7 +26,7 @@ class WithdrawMoneyCommandHandlerTest extends Specification {
         UUID requestedAccountNumber = UUID.randomUUID()
         BigDecimal amountToWithdraw = BigDecimal.TEN
         authenticationFacade.idOfCurrentLoggedUser() >> USER_ID
-        accountRepository.getOne(USER_ID) >> ACCOUNT
+        accountRepository.getOneByUserId(USER_ID) >> ACCOUNT
         accountRepository.getSystemAccountNumber() >> SYSTEM_ACCOUNT_NUMBER
 
         when:

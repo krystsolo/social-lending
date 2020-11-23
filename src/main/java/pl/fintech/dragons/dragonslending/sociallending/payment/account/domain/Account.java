@@ -53,21 +53,21 @@ public class Account {
         return balance.subtract(frozenAmount);
     }
 
-    public void freeze(BigDecimal amount) {
+    public void freeze(@NonNull BigDecimal amount) {
         if (availableBalance().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalStateException("Account balance cannot be negative");
         }
         this.frozenAmount = frozenAmount.add(amount);
     }
 
-    public void unfreeze(BigDecimal amount) {
+    public void unfreeze(@NonNull BigDecimal amount) {
         if (frozenAmount.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalStateException("Cannot unfreeze more money then it was frozen on account");
         }
         this.frozenAmount = frozenAmount.subtract(amount);
     }
 
-    private void validateAmountIsNotNegative(@NonNull BigDecimal amount) {
+    private void validateAmountIsNotNegative(BigDecimal amount) {
         if (negativeAmount(amount)) {
             throw new IllegalArgumentException("Amount cannot be negative: " + amount);
         }

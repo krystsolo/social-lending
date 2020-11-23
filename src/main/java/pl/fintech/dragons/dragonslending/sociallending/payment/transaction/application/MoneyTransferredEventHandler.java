@@ -3,16 +3,13 @@ package pl.fintech.dragons.dragonslending.sociallending.payment.transaction.appl
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
-import pl.fintech.dragons.dragonslending.sociallending.identity.domain.UserRegistered;
-import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.Account;
-import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.AccountRepository;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.MoneyTransferEvent;
 import pl.fintech.dragons.dragonslending.sociallending.payment.transaction.domain.MoneyTransaction;
 import pl.fintech.dragons.dragonslending.sociallending.payment.transaction.domain.MoneyTransactionRepository;
 
 @RequiredArgsConstructor
 @Transactional
-class MoneyTransferredEventHandler {
+public class MoneyTransferredEventHandler {
 
     private final MoneyTransactionRepository moneyTransactionRepository;
 

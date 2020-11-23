@@ -15,6 +15,8 @@ public class ApiErrorDecoder implements ErrorDecoder {
                 return new InvalidEndpointRequestException("Bank api exception", "Not proper bankApi api configuration");
             case 404:
                 return new NotFoundException("Account number not found in bankApi");
+            case 422:
+                return new IllegalStateException("Bank API exception - there is no enough money on source account to make transfer");
             default:
                 return new InternalServerErrorException("Bank api internal exception");
         }

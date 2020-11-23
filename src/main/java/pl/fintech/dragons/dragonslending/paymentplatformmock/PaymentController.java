@@ -24,7 +24,7 @@ class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/deposit")
-    void registerUser(@RequestBody @Valid DepositRequest depositRequest) {
+    void registerDeposit(@RequestBody @Valid DepositRequest depositRequest) {
         log.debug("REST request to register new deposit : {}", depositRequest);
         paymentService.registerDeposit(depositRequest);
     }

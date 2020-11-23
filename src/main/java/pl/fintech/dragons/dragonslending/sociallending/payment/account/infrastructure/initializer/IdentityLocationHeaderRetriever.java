@@ -1,7 +1,6 @@
 package pl.fintech.dragons.dragonslending.sociallending.payment.account.infrastructure.initializer;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import pl.fintech.dragons.dragonslending.common.errors.InternalServerErrorException;
 
 import java.net.URI;
