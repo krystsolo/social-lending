@@ -19,12 +19,11 @@ pipeline {
             }
         }
         stage('Sonar') {
-            when { branch 'master' }
             agent { docker 'fintech/sonar-agent' }
             steps {
                 withSonarQubeEnv('SonarQube') {
                     script {
-                        sh "sonar-scanner -Dsonar.projectKey=ersa-team::dragons-lending-api -Dsonar.java.binaries=target"
+                        sh "sonar-scanner -Dsonar.projectKey=ersa-team::dragons-lending-api -Dsonar.java.binaries=."
                     }
                 }
             }
