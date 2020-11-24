@@ -11,8 +11,7 @@ class AuctionDataFictureFactory {
     static final UUID AUCTION_ID = UUID.randomUUID()
     static final LocalDate DATE = LocalDate.now().plusDays(1)
 
-    static final AuctionRequest AUCTION_REQUEST = new AuctionRequest(
-            AUCTION_ID, BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), DATE)
+    static final AuctionRequest AUCTION_REQUEST = new AuctionRequest(BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), DATE)
 
     static final AuctionQueryDto AUCTION_QUERY_DTO = new AuctionQueryDto(
             AUCTION_ID, BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), DATE, UserData.USER_ID, UserData.USER.username)

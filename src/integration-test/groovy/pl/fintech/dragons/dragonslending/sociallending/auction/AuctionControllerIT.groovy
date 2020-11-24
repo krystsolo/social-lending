@@ -122,7 +122,7 @@ class AuctionControllerIT extends Specification {
 
     def 'PUT /api/auctions/{id} should return HTTP 200 with auction id'() {
         given:
-        mockedAuctionService.updateAuction(AuctionDataFictureFactory.AUCTION_REQUEST) >> AuctionDataFictureFactory.AUCTION_ID
+        mockedAuctionService.updateAuction(AuctionDataFictureFactory.AUCTION_REQUEST, AuctionDataFictureFactory.AUCTION_ID) >> AuctionDataFictureFactory.AUCTION_ID
 
         when:
         def response = restClient.with().body(AuctionDataFictureFactory.AUCTION_REQUEST).when().put('/api/auctions/' + AuctionDataFictureFactory.AUCTION_ID)

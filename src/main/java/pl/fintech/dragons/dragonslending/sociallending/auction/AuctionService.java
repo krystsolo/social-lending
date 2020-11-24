@@ -59,10 +59,6 @@ public class AuctionService {
   }
 
   public UUID updateAuction(AuctionRequest dto, UUID id) throws AccessDeniedException {
-    if (id == null) {
-      throw new IllegalArgumentException("Object cannot be updated, id is null");
-    }
-
     Auction auction = auctionRepository.getOne(id);
 
     if (!userService.getCurrentLoggedUser().getId().equals(auction.getUserId())) {

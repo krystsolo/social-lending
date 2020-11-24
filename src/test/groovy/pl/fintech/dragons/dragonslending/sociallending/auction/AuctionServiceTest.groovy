@@ -10,6 +10,7 @@ import spock.lang.Specification
 import java.nio.file.AccessDeniedException
 
 import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.*
+import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.AUCTION_ID
 
 class AuctionServiceTest extends Specification {
     AuctionRepository auctionRepository = Mock(AuctionRepository)
@@ -97,26 +98,10 @@ class AuctionServiceTest extends Specification {
         mockRepositoryGetOne()
 
         when:
-        def auctionId = auctionService.updateAuction(AUCTION_REQUEST)
+        def auctionId = auctionService.updateAuction(AUCTION_REQUEST, AUCTION_ID)
 
         then:
         auctionId != null
-    }
-
-    def "Should throw illegal argument exception during update auction when auction id is null"() {
-        given:
-        AuctionRequest auctionRequest = AuctionRequest.builder()
-                .loanAmount(AUCTION_REQUEST.loanAmount)
-                .timePeriod(AUCTION_REQUEST.timePeriod)
-                .interestRate(AUCTION_REQUEST.interestRate)
-                .endDate(AUCTION_REQUEST.endDate)
-                .build()
-
-        when:
-        auctionService.updateAuction(auctionRequest)
-
-        then:
-        thrown(IllegalArgumentException)
     }
 
     def "Should throw access denied exception during update auction when this auction is not assign to current logged user"() {
@@ -125,7 +110,7 @@ class AuctionServiceTest extends Specification {
         userService.getCurrentLoggedUser() >> UserDto.builder().id(UUID.randomUUID()).build()
 
         when:
-        auctionService.updateAuction(AUCTION_REQUEST)
+        auctionService.updateAuction(AUCTION_REQUEST, AUCTION_ID)
 
         then:
         thrown(AccessDeniedException)

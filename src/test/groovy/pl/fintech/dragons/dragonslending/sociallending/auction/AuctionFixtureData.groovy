@@ -18,6 +18,5 @@ class AuctionFixtureData {
 
     static final AuctionQueryDto AUCTION_QUERY = AUCTION.toAuctionDto(UserFixture.USER.username)
 
-    static final AuctionRequest AUCTION_REQUEST = new AuctionRequest(
-            AUCTION_ID, BigDecimal.valueOf(1000), 2, 2.5, DATE)
+    static final AuctionRequest AUCTION_REQUEST = new AuctionRequest(BigDecimal.valueOf(1000), 2, 2.5, DATE)
 }

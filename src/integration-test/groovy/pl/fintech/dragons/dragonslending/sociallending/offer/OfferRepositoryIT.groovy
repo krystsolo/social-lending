@@ -18,7 +18,7 @@ import pl.fintech.dragons.dragonslending.sociallending.offer.config.OfferConfig
 import spock.lang.Subject
 
 @DataJpaTest
-@ActiveProfiles("test")
+@ActiveProfiles("integration-test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = [OfferConfig.class, UserConfig.class])
 class OfferRepositoryIT extends PostgreSQLContainerSpecification {
