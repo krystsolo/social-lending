@@ -58,12 +58,12 @@ public class AuctionService {
     return def.getId();
   }
 
-  public UUID updateAuction(AuctionRequest dto) throws AccessDeniedException {
-    if (dto.getId() == null) {
+  public UUID updateAuction(AuctionRequest dto, UUID id) throws AccessDeniedException {
+    if (id == null) {
       throw new IllegalArgumentException("Object cannot be updated, id is null");
     }
 
-    Auction auction = auctionRepository.getOne(dto.getId());
+    Auction auction = auctionRepository.getOne(id);
 
     if (!userService.getCurrentLoggedUser().getId().equals(auction.getUserId())) {
       throw new AccessDeniedException("You don't have permission to update this auction");

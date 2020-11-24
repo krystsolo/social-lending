@@ -8,7 +8,7 @@ public class LoanCalculatorAdapter implements LoanCalculator {
   private static final double FEE_RATE = 0.02;
 
   @Override
-  public LoanCalculationDto calculate(BigDecimal loanAmount, Integer timePeriod, Float interestRate) {
+  public LoanCalculation calculate(BigDecimal loanAmount, Integer timePeriod, Float interestRate) {
 
     BigDecimal finalValue = loanAmount
         .add(loanAmount
@@ -17,7 +17,7 @@ public class LoanCalculatorAdapter implements LoanCalculator {
         .add(loanAmount
             .multiply(BigDecimal.valueOf(FEE_RATE)));
 
-    return LoanCalculationDto.builder()
+    return LoanCalculation.builder()
         .finalValue(finalValue.setScale(2, RoundingMode.HALF_UP))
         .periodValue(finalValue.divide(BigDecimal.valueOf(timePeriod), 2, RoundingMode.HALF_UP))
         .build();

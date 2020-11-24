@@ -13,8 +13,6 @@ import java.util.UUID;
 @Value
 @With
 public class AuctionRequest {
-  UUID id;
-
   @NotNull
   @DecimalMin(value = "0", message = "Loan amount value should not be less then 0")
   @DecimalMax(value = "10000", message = "Loan amount value should not be greater than 10000")

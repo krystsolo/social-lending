@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Builder
 @Value
-public class LoanCalculationDto {
+public class LoanCalculation {
   BigDecimal finalValue;
   BigDecimal periodValue;
 }

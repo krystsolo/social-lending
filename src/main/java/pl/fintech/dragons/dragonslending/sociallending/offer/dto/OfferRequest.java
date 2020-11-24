@@ -4,9 +4,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -15,8 +13,8 @@ import java.util.UUID;
 @With
 public class OfferRequest {
   @NotNull
-  @Min(value = 0, message = "Offer amount should not be less than 0")
-  @Max(value = 10000, message = "Offer amount should not be greater than 10000")
+  @DecimalMin(value = "0", message = "Offer amount should not be less than 0")
+  @DecimalMax(value = "10000", message = "Offer amount should not be greater than 10000")
   BigDecimal offerAmount;
 
   @NotNull

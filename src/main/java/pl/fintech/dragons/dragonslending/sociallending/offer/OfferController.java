@@ -30,9 +30,9 @@ public class OfferController {
 
   @Operation(summary = "Get list of all offers current logged user")
   @GetMapping("/offers/user")
-  ResponseEntity<List<OfferQueryDto>> getCurrentLoggedUserOffers() {
+  List<OfferQueryDto> getCurrentLoggedUserOffers() {
     log.debug("REST request to get list of current logged user offers");
-    return ResponseEntity.ok().body(offerService.getCurrentLoggedUserOffers());
+    return offerService.getCurrentLoggedUserOffers();
   }
 
   @Operation(summary = "Get list of offers by auction id")

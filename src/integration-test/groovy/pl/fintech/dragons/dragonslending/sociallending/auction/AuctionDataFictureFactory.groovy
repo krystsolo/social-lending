@@ -3,7 +3,6 @@ package pl.fintech.dragons.dragonslending.sociallending.auction
 import org.apache.commons.lang3.RandomUtils
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest
-import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculationDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
 
 import java.time.LocalDate

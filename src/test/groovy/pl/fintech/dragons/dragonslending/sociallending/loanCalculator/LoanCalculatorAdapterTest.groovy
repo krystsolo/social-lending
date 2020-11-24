@@ -10,7 +10,7 @@ class LoanCalculatorAdapterTest extends Specification {
         LoanCalculatorAdapter loanCalculator = new LoanCalculatorAdapter();
 
         when:
-        LoanCalculationDto calculationDto = loanCalculator.calculate(BigDecimal.valueOf(1000), 2, 2.5)
+        LoanCalculation calculationDto = loanCalculator.calculate(BigDecimal.valueOf(1000), 2, 2.5)
 
         then:
         calculationDto.finalValue == LoanCalculatorFixtureData.CALCULATION_DTO.finalValue

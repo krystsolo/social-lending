@@ -38,20 +38,20 @@ class AuctionController {
 
   @Operation(summary = "Get list of auctions when user is logged in")
   @GetMapping("/auctions")
-  ResponseEntity<List<AuctionQueryDto>> getAuctions(@RequestParam(required = false, defaultValue = "false") Boolean yours) {
+  List<AuctionQueryDto> getAuctions(@RequestParam(required = false, defaultValue = "false") Boolean yours) {
     log.debug("REST request to get list of auctions when user is logged in");
     if(yours) {
-      return ResponseEntity.ok().body(auctionService.getCurrentUserAuctions());
+      return auctionService.getCurrentUserAuctions();
     } else {
-      return ResponseEntity.ok().body(auctionService.getAllNotCurrentUserAuctions());
+      return auctionService.getAllNotCurrentUserAuctions();
     }
   }
 
   @Operation(summary = "Get list of all auctions")
   @GetMapping("/auctions/public")
-  ResponseEntity<List<AuctionQueryDto>> getPublicAuctions() {
+  List<AuctionQueryDto> getPublicAuctions() {
     log.debug("REST request to get list of auctions");
-    return ResponseEntity.ok().body(auctionService.getPublicAuctions());
+    return auctionService.getPublicAuctions();
   }
 
   @Operation(summary = "Save auction")
@@ -66,9 +66,9 @@ class AuctionController {
 
   @Operation(summary = "Update auction")
   @PutMapping("/auctions/{id}")
-  ResponseEntity<UUID> updateAuction(@RequestBody @Valid AuctionRequest auctionRequest) throws AccessDeniedException {
+  ResponseEntity<UUID> updateAuction(@RequestBody @Valid AuctionRequest auctionRequest, @PathVariable UUID id) throws AccessDeniedException {
     log.debug("REST request to update Auction : {}", auctionRequest);
-    UUID auctionId = auctionService.updateAuction(auctionRequest);
+    UUID auctionId = auctionService.updateAuction(auctionRequest, id);
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, auctionId.toString()))
         .body(auctionId);

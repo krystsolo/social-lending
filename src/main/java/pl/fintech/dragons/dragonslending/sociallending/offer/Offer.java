@@ -1,17 +1,14 @@
 package pl.fintech.dragons.dragonslending.sociallending.offer;
 
 import lombok.*;
-import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
-import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculationDto;
+import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculation;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -27,8 +24,8 @@ public class Offer {
   private UUID id;
 
   @NotNull
-  @Min(value = 0, message = "Offer amount should not be less than 0")
-  @Max(value = 10000, message = "Offer amount should not be greater than 10000")
+  @DecimalMin(value = "0", message = "Offer amount should not be less than 0")
+  @DecimalMax(value = "10000", message = "Offer amount should not be greater than 10000")
   @Column(name = "amount")
   private BigDecimal offerAmount;
 
@@ -59,7 +56,7 @@ public class Offer {
     this.userId = userId;
   }
 
-  OfferQueryDto toOfferDto(String username, LoanCalculationDto calculationDto) {
+  OfferQueryDto toOfferDto(String username, LoanCalculation calculationDto) {
     return OfferQueryDto.builder()
         .id(this.id)
         .offerAmount(this.offerAmount)
