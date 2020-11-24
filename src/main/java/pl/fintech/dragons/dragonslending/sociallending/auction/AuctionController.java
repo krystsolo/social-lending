@@ -30,34 +30,35 @@ class AuctionController {
 
   @Operation(summary = "Get auction details by id")
   @GetMapping("/auctions/{id}")
-  AuctionQueryDto getAuctionById(@PathVariable UUID id) {
+  ResponseEntity<AuctionQueryDto> getAuctionById(@PathVariable UUID id) {
     log.debug("REST request to get Auction : {}", id);
-    return auctionService.getAuction(id);
+    return ResponseEntity.ok()
+        .body(auctionService.getAuction(id));
   }
 
   @Operation(summary = "Get list of auctions when user is logged in")
   @GetMapping("/auctions")
-  List<AuctionQueryDto> getAuctions(@RequestParam(required = false, defaultValue = "false") Boolean yours) {
+  ResponseEntity<List<AuctionQueryDto>> getAuctions(@RequestParam(required = false, defaultValue = "false") Boolean yours) {
     log.debug("REST request to get list of auctions when user is logged in");
     if(yours) {
-      return auctionService.getCurrentUserAuctions();
+      return ResponseEntity.ok().body(auctionService.getCurrentUserAuctions());
     } else {
-      return auctionService.getAllNotCurrentUserAuctions();
+      return ResponseEntity.ok().body(auctionService.getAllNotCurrentUserAuctions());
     }
   }
 
   @Operation(summary = "Get list of all auctions")
   @GetMapping("/auctions/public")
-  List<AuctionQueryDto> getPublicAuctions() {
+  ResponseEntity<List<AuctionQueryDto>> getPublicAuctions() {
     log.debug("REST request to get list of auctions");
-    return auctionService.getPublicAuctions();
+    return ResponseEntity.ok().body(auctionService.getPublicAuctions());
   }
 
   @Operation(summary = "Save auction")
   @PostMapping("/auctions")
-  ResponseEntity<UUID> createAuctions(@RequestBody @Valid AuctionRequest auctionRequest) throws URISyntaxException {
+  ResponseEntity<UUID> createAuction(@RequestBody @Valid AuctionRequest auctionRequest) throws URISyntaxException {
     log.debug("REST request to create Auction : {}", auctionRequest);
-    UUID auctionId = auctionService.saveAuctionDto(auctionRequest);
+    UUID auctionId = auctionService.saveAuction(auctionRequest);
     return ResponseEntity.created(new URI("/api/auctions/" + auctionId))
         .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, auctionId.toString()))
         .body(auctionId);
@@ -65,9 +66,9 @@ class AuctionController {
 
   @Operation(summary = "Update auction")
   @PutMapping("/auctions/{id}")
-  ResponseEntity<UUID> updateAuctionDto(@RequestBody @Valid AuctionRequest auctionRequest) throws AccessDeniedException {
+  ResponseEntity<UUID> updateAuction(@RequestBody @Valid AuctionRequest auctionRequest) throws AccessDeniedException {
     log.debug("REST request to update Auction : {}", auctionRequest);
-    UUID auctionId = auctionService.updateAuctionDto(auctionRequest);
+    UUID auctionId = auctionService.updateAuction(auctionRequest);
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, auctionId.toString()))
         .body(auctionId);
@@ -75,8 +76,9 @@ class AuctionController {
 
   @Operation(summary = "Delete auction by id")
   @DeleteMapping("/auctions/{id}")
-  void deleteAuction(@PathVariable UUID id) throws AccessDeniedException {
+  ResponseEntity<Void> deleteAuction(@PathVariable UUID id) throws AccessDeniedException {
     log.debug("REST request to delete Auction by id: {}", id);
     auctionService.deleteAuction(id);
+    return ResponseEntity.noContent().build();
   }
 }

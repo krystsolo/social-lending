@@ -109,7 +109,7 @@ class AuctionControllerIT extends Specification {
 
     def 'POST /api/auctions should return HTTP 201 with auction id'() {
         given:
-        mockedAuctionService.saveAuctionDto(AuctionDataFictureFactory.AUCTION_REQUEST) >> AuctionDataFictureFactory.AUCTION_ID
+        mockedAuctionService.saveAuction(AuctionDataFictureFactory.AUCTION_REQUEST) >> AuctionDataFictureFactory.AUCTION_ID
 
         when:
         def response = restClient.with().body(AuctionDataFictureFactory.AUCTION_REQUEST).when().post('/api/auctions')
@@ -122,7 +122,7 @@ class AuctionControllerIT extends Specification {
 
     def 'PUT /api/auctions/{id} should return HTTP 200 with auction id'() {
         given:
-        mockedAuctionService.updateAuctionDto(AuctionDataFictureFactory.AUCTION_REQUEST) >> AuctionDataFictureFactory.AUCTION_ID
+        mockedAuctionService.updateAuction(AuctionDataFictureFactory.AUCTION_REQUEST) >> AuctionDataFictureFactory.AUCTION_ID
 
         when:
         def response = restClient.with().body(AuctionDataFictureFactory.AUCTION_REQUEST).when().put('/api/auctions/' + AuctionDataFictureFactory.AUCTION_ID)
@@ -138,7 +138,7 @@ class AuctionControllerIT extends Specification {
         def response = restClient.when().delete('/api/auctions/' + AuctionDataFictureFactory.AUCTION_ID)
 
         then:
-        response.statusCode() == 200
+        response.statusCode() == 204
     }
 
     @Unroll
@@ -158,8 +158,8 @@ class AuctionControllerIT extends Specification {
         AuctionDataFictureFactory.AUCTION_REQUEST.withTimePeriod(0)                         || 'Time period value should not be less than 1.'
         AuctionDataFictureFactory.AUCTION_REQUEST.withTimePeriod(37)                        || 'Time period value should not be greater than 36.'
         AuctionDataFictureFactory.AUCTION_REQUEST.withInterestRate(null)                    || 'Interest rate cannot be null.'
-        AuctionDataFictureFactory.AUCTION_REQUEST.withInterestRate(-1)                      || 'Time period value should not be less than 1.'
-        AuctionDataFictureFactory.AUCTION_REQUEST.withInterestRate(21)                      || 'Time period value should not be greater than 20.'
+        AuctionDataFictureFactory.AUCTION_REQUEST.withInterestRate(-1)                      || 'Interest rate value should not be less than 0.'
+        AuctionDataFictureFactory.AUCTION_REQUEST.withInterestRate(21)                      || 'Interest rated value should not be greater than 20.'
         AuctionDataFictureFactory.AUCTION_REQUEST.withEndDate(null)                         || 'End date cannot be null.'
     }
 

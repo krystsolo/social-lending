@@ -15,7 +15,6 @@ public class AuctionQueryDto {
   Integer timePeriod;
   Float interestRate;
   LocalDate endDate;
-  CalculationDto calculation;
   UUID userId;
   String username;
 }

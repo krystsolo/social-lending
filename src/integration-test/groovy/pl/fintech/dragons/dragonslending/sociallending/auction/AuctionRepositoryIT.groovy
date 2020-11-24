@@ -14,7 +14,7 @@ import pl.fintech.dragons.dragonslending.sociallending.auction.config.AuctionCon
 import spock.lang.Subject
 
 @DataJpaTest
-@ActiveProfiles("test")
+@ActiveProfiles("integration-test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = [AuctionConfig.class, UserConfig.class])
 class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
@@ -184,6 +184,6 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     }
 
     UUID addSecondUserToDb() {
-        UUID secondUser = userService.register(new UserRegisterRequest("email@email.pl", "string", "string", "string", "string"))
+        return userService.register(new UserRegisterRequest("email@email.pl", "string", "string", "string", "string"))
     }
 }

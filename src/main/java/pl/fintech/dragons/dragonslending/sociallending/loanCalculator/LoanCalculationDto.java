@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.sociallending.auction.dto;
+package pl.fintech.dragons.dragonslending.sociallending.loanCalculator;
 
 import lombok.Builder;
 import lombok.Value;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Builder
 @Value
-public class CalculationDto {
+public class LoanCalculationDto {
   BigDecimal finalValue;
   BigDecimal periodValue;
 }

@@ -1,7 +1,6 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction;
 
 import lombok.*;
-import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
 
 import javax.persistence.Column;
@@ -27,7 +26,7 @@ public class Auction {
   @Column(name = "loan_amount")
   @NotNull
   @DecimalMin(value = "0", message = "Loan amount value should not be less then 0")
-  @DecimalMax(value = "1000000", message = "Loan amount value should not be greater than 1000000")
+  @DecimalMax(value = "10000", message = "Loan amount value should not be greater than 10000")
   private BigDecimal loanAmount;
 
   @Column(name = "time_period")
@@ -72,14 +71,13 @@ public class Auction {
     setEndDate(endDate);
   }
 
-  AuctionQueryDto toAuctionDto(CalculationDto calculationDto, String username) {
+  AuctionQueryDto toAuctionDto(String username) {
     return AuctionQueryDto.builder()
         .id(this.id)
         .loanAmount(this.loanAmount)
         .timePeriod(this.timePeriod)
         .interestRate(this.interestRate)
         .endDate(this.endDate)
-        .calculation(calculationDto)
         .userId(this.userId)
         .username(username)
         .build();

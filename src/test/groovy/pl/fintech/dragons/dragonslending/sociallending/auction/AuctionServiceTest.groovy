@@ -1,6 +1,5 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
-import pl.fintech.dragons.dragonslending.sociallending.auction.calculator.AuctionCalculator
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
@@ -10,33 +9,30 @@ import spock.lang.Specification
 
 import java.nio.file.AccessDeniedException
 
-import static AuctionFixtureData.*
+import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.*
 
 class AuctionServiceTest extends Specification {
     AuctionRepository auctionRepository = Mock(AuctionRepository)
-    AuctionCalculator auctionCalculator = Mock(AuctionCalculator)
     UserService userService = Mock(UserService)
-    AuctionService auctionService = new AuctionService(auctionRepository, auctionCalculator, userService)
+    AuctionService auctionService = new AuctionService(auctionRepository, userService)
 
     def "Should get auction by id"() {
         given:
         mockUserById()
         mockRepositoryGetOne()
-        mockAuctionCalculator()
 
         when:
         def auctionQueryDto = auctionService.getAuction(AUCTION_ID)
 
         then:
-        auctionQueryDto == AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)
+        auctionQueryDto == AUCTION.toAuctionDto(UserFixture.USER_DTO.username)
     }
 
     def "Should return list of all auctions"() {
         given:
         mockUserById()
-        mockAuctionCalculator()
-        List<AuctionQueryDto> auctionList = [AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username),
-                                             AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
+        List<AuctionQueryDto> auctionList = [AUCTION.toAuctionDto(UserFixture.USER_DTO.username),
+                                             AUCTION.toAuctionDto(UserFixture.USER_DTO.username)]
         auctionRepository.findAll() >> AUCTION_LIST
 
         when:
@@ -51,10 +47,9 @@ class AuctionServiceTest extends Specification {
     def "Should return list of all current logged user auctions"() {
         given:
         mockCurrentLoggedUser()
-        mockAuctionCalculator()
         List<AuctionQueryDto> auctionList = [
-                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username),
-                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
+                AUCTION.toAuctionDto(UserFixture.USER_DTO.username),
+                AUCTION.toAuctionDto(UserFixture.USER_DTO.username)]
         auctionRepository.findAllByUserId(UserFixture.USER_ID) >> AUCTION_LIST
         userService.getUser(UserFixture.USER_ID) >> UserFixture.USER_DTO
 
@@ -70,10 +65,9 @@ class AuctionServiceTest extends Specification {
     def "Should return list of all auctions without current logged user auctions"() {
         given:
         mockCurrentLoggedUser()
-        mockAuctionCalculator()
         List<AuctionQueryDto> auctionList = [
-                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username),
-                AUCTION.toAuctionDto(CALCULATION_DTO, UserFixture.USER_DTO.username)]
+                AUCTION.toAuctionDto(UserFixture.USER_DTO.username),
+                AUCTION.toAuctionDto(UserFixture.USER_DTO.username)]
         auctionRepository.findAllByUserIdIsNot(UserFixture.USER_ID) >> AUCTION_LIST
         userService.getUser(UserFixture.USER_ID) >> UserFixture.USER_DTO
 
@@ -91,7 +85,7 @@ class AuctionServiceTest extends Specification {
         mockCurrentLoggedUser()
 
         when:
-        def auctionId = auctionService.saveAuctionDto(AUCTION_REQUEST)
+        def auctionId = auctionService.saveAuction(AUCTION_REQUEST)
 
         then:
         auctionId != null
@@ -103,7 +97,7 @@ class AuctionServiceTest extends Specification {
         mockRepositoryGetOne()
 
         when:
-        def auctionId = auctionService.updateAuctionDto(AUCTION_REQUEST)
+        def auctionId = auctionService.updateAuction(AUCTION_REQUEST)
 
         then:
         auctionId != null
@@ -119,7 +113,7 @@ class AuctionServiceTest extends Specification {
                 .build()
 
         when:
-        auctionService.updateAuctionDto(auctionRequest)
+        auctionService.updateAuction(auctionRequest)
 
         then:
         thrown(IllegalArgumentException)
@@ -131,7 +125,7 @@ class AuctionServiceTest extends Specification {
         userService.getCurrentLoggedUser() >> UserDto.builder().id(UUID.randomUUID()).build()
 
         when:
-        auctionService.updateAuctionDto(AUCTION_REQUEST)
+        auctionService.updateAuction(AUCTION_REQUEST)
 
         then:
         thrown(AccessDeniedException)
@@ -165,14 +159,8 @@ class AuctionServiceTest extends Specification {
     }
 
 
-
-
     void mockRepositoryGetOne() {
         auctionRepository.getOne(AUCTION_ID) >> AUCTION
-    }
-
-    void mockAuctionCalculator() {
-        auctionCalculator.calculate(AUCTION) >> CALCULATION_DTO
     }
 
     void mockUserById() {

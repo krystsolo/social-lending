@@ -6,16 +6,14 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 
-import static AuctionFixtureData.*
-
 class AuctionTest extends Specification {
 
     def "should return auction dto"() {
         given:
-        Auction auction = AUCTION
+        Auction auction = AuctionFixtureData.AUCTION
 
         when:
-        AuctionQueryDto auctionQueryDto = auction.toAuctionDto(CALCULATION_DTO, UserFixture.USER.username)
+        AuctionQueryDto auctionQueryDto = auction.toAuctionDto(UserFixture.USER.username)
 
         then:
         auction.id == auctionQueryDto.id
@@ -23,7 +21,6 @@ class AuctionTest extends Specification {
         auction.timePeriod == auctionQueryDto.timePeriod
         auction.interestRate == auctionQueryDto.interestRate
         auction.endDate == auctionQueryDto.endDate
-        auctionQueryDto.calculation == CALCULATION_DTO
         auctionQueryDto.username == UserFixture.USER.username
         auctionQueryDto.userId == UserFixture.USER.id
     }
@@ -31,7 +28,7 @@ class AuctionTest extends Specification {
     def "should change auction parameters"() {
         def id = UUID.randomUUID()
         given:
-        Auction auction = new Auction(id, BigDecimal.TEN, 2, 2 , LocalDate.now(), UUID.randomUUID())
+        Auction auction = new Auction(id, BigDecimal.TEN, 2, 2, LocalDate.now(), UUID.randomUUID())
         LocalDate date = LocalDate.now().plusDays(1)
 
         when:
@@ -53,13 +50,13 @@ class AuctionTest extends Specification {
 
 
         when:
-        Auction auction = new Auction(loanAmount, timePeriod, interestRate, DATE, UserFixture.USER_ID)
+        Auction auction = new Auction(loanAmount, timePeriod, interestRate, AuctionFixtureData.DATE, UserFixture.USER_ID)
 
         then:
         auction.loanAmount == loanAmount
         auction.timePeriod == timePeriod
         auction.interestRate == interestRate
-        auction.endDate == DATE
+        auction.endDate == AuctionFixtureData.DATE
         auction.userId == UserFixture.USER_ID
     }
 }

@@ -2,10 +2,8 @@ package pl.fintech.dragons.dragonslending.sociallending.auction;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import pl.fintech.dragons.dragonslending.sociallending.auction.calculator.AuctionCalculator;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest;
-import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
 
@@ -18,16 +16,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class AuctionService {
   private final AuctionRepository auctionRepository;
-  private final AuctionCalculator auctionCalculator;
   private final UserService userService;
 
   @Transactional(readOnly = true)
   public AuctionQueryDto getAuction(UUID id) {
     Auction auction = auctionRepository.getOne(id);
-    CalculationDto calculationDto = auctionCalculator.calculate(auction);
     UserDto user = userService.getUser(auction.getUserId());
     return auction.toAuctionDto(
-        calculationDto,
         user.getUsername()
     );
   }
@@ -50,7 +45,7 @@ public class AuctionService {
         .findAll());
   }
 
-  public UUID saveAuctionDto(AuctionRequest dto) {
+  public UUID saveAuction(AuctionRequest dto) {
     Auction def = new Auction(
         dto.getLoanAmount(),
         dto.getTimePeriod(),
@@ -63,7 +58,7 @@ public class AuctionService {
     return def.getId();
   }
 
-  public UUID updateAuctionDto(AuctionRequest dto) throws AccessDeniedException {
+  public UUID updateAuction(AuctionRequest dto) throws AccessDeniedException {
     if (dto.getId() == null) {
       throw new IllegalArgumentException("Object cannot be updated, id is null");
     }
@@ -86,7 +81,7 @@ public class AuctionService {
 
   public void deleteAuction(UUID auctionId) throws AccessDeniedException {
     if (userService.getCurrentLoggedUser().getId() != auctionRepository.getOne(auctionId).userId) {
-      throw new AccessDeniedException("You don't habe permission to delete this auction");
+      throw new AccessDeniedException("You don't have permission to delete this auction");
     }
     auctionRepository.deleteById(auctionId);
   }
@@ -95,7 +90,6 @@ public class AuctionService {
     return auctions
         .stream()
         .map(e -> e.toAuctionDto(
-            auctionCalculator.calculate(e),
             userService.getUser(e.getUserId()).getUsername())
         )
         .collect(Collectors.toList());

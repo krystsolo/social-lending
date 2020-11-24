@@ -1,7 +1,8 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
+import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
-import pl.fintech.dragons.dragonslending.sociallending.auction.dto.CalculationDto
+import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculationDto
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest
 
 import java.time.LocalDate
@@ -14,9 +15,9 @@ class AuctionFixtureData {
 
     static final Auction AUCTION = new Auction(BigDecimal.valueOf(1000), 2, 2.5, DATE, UserFixture.USER_ID)
 
-    static final CALCULATION_DTO = new CalculationDto(BigDecimal.valueOf(1024.17), 512.08)
-
     static final List<Auction> AUCTION_LIST = [AUCTION, AUCTION]
+
+    static final AuctionQueryDto AUCTION_QUERY = AUCTION.toAuctionDto(UserFixture.USER.username)
 
     static final AuctionRequest AUCTION_REQUEST = new AuctionRequest(
             AUCTION_ID, BigDecimal.valueOf(1000), 2, 2.5, DATE)
