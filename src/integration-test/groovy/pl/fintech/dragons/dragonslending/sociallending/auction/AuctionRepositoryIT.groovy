@@ -1,5 +1,6 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
+import org.apache.commons.lang3.RandomUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -33,7 +34,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def 'Should store new auction'() {
         given:
         UUID userUUID = addUserToDb()
-        def auction = new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID)
+        def auction = new Auction(BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), AuctionDataFictureFactory.DATE, userUUID)
 
         when:
         repository.save(auction)

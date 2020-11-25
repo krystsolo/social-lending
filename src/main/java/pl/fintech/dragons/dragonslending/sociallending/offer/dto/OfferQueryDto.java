@@ -16,4 +16,6 @@ public class OfferQueryDto {
   LoanCalculation calculation;
   UUID userId;
   String username;
+  String auctionOwner;
+  UUID auctionId;
 }

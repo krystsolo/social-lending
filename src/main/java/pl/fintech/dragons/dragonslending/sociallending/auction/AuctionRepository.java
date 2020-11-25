@@ -4,11 +4,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, UUID> {
-  List<Auction> findAllByUserIdIsNot(UUID userId);
+  List<Auction> findAllByUserIdIsNotAndAuctionStatusAndIdIsNotIn(UUID userId, AuctionStatus auctionStatus, List<UUID> idList);
 
-  List<Auction> findAllByUserId(UUID userId);
+  List<Auction> findAllByUserIdAndAuctionStatus(UUID userId, AuctionStatus auctionStatus);
+
+  List<Auction> findAllByAuctionStatus(AuctionStatus auctionStatus);
+
+  Auction findByIdAndAuctionStatus(UUID auctionId, AuctionStatus auctionStatus);
 }

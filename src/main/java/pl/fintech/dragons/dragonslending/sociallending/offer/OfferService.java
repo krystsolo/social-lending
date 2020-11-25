@@ -25,7 +25,9 @@ public class OfferService {
 
   public List<OfferQueryDto> getCurrentLoggedUserOffers() {
     return mapOfferListToDto(offerRepository
-        .findAllByUserId(userService.getCurrentLoggedUser().getId()));
+        .findAllByUserIdAndOfferStatus(
+            userService.getCurrentLoggedUser().getId(),
+            OfferStatus.ACTIVE));
   }
 
   public List<OfferQueryDto> getOffersByAuctionId(UUID auctionId) {
@@ -56,7 +58,16 @@ public class OfferService {
     if (userService.getCurrentLoggedUser().getId() != offerRepository.getOne(offerId).userId) {
       throw new AccessDeniedException("You don't have permission to delete this offer");
     }
-    offerRepository.deleteById(offerId);
+    Offer offer = offerRepository.getOne(offerId);
+    offer.makeOfferTerminated();
+    offerRepository.save(offer);
+  }
+
+  public void makeOffersTerminatedByAuction(UUID auctionId) throws AccessDeniedException {
+    if (userService.getCurrentLoggedUser().getId() != auctionService.getAuction(auctionId).getUserId()) {
+      throw new AccessDeniedException("You don't have enough permissions");
+    }
+    offerRepository.findAllByAuctionId(auctionId).forEach(Offer::makeOfferTerminated);
   }
 
   private List<OfferQueryDto> mapOfferListToDto(List<Offer> offers) {
@@ -64,7 +75,8 @@ public class OfferService {
         .stream()
         .map(offer -> offer.toOfferDto(
             userService.getUser(offer.getUserId()).getUsername(),
-            loanCalculator.calculate(offer.getOfferAmount(), offer.getTimePeriod(), offer.getInterestRate()))
+            loanCalculator.calculate(offer.getOfferAmount(), offer.getTimePeriod(), offer.getInterestRate()),
+            userService.getUser(offer.getAuctionId()).getUsername())
         )
         .collect(Collectors.toList());
   }

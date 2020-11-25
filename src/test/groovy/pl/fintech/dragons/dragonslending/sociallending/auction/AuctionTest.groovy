@@ -1,10 +1,12 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
+import org.apache.commons.lang3.RandomUtils
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import spock.lang.Specification
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class AuctionTest extends Specification {
 
@@ -28,7 +30,7 @@ class AuctionTest extends Specification {
     def "should change auction parameters"() {
         def id = UUID.randomUUID()
         given:
-        Auction auction = new Auction(id, BigDecimal.TEN, 2, 2, LocalDate.now(), UUID.randomUUID())
+        Auction auction = new Auction(id, BigDecimal.TEN, RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), LocalDate.now().plusDays(1), UUID.randomUUID(), AuctionStatus.ACTIVE, LocalDateTime.now())
         LocalDate date = LocalDate.now().plusDays(1)
 
         when:
@@ -58,5 +60,16 @@ class AuctionTest extends Specification {
         auction.interestRate == interestRate
         auction.endDate == AuctionFixtureData.DATE
         auction.userId == UserFixture.USER_ID
+    }
+
+    def "Should change auction status to TERMINATED"() {
+        given:
+        Auction auction = AuctionFixtureData.AUCTION
+
+        when:
+        auction.makeAuctionTerminated()
+
+        then:
+        auction.auctionStatus == AuctionStatus.TERMINATED
     }
 }

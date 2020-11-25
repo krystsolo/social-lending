@@ -3,13 +3,11 @@ package pl.fintech.dragons.dragonslending.sociallending.auction;
 import lombok.*;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -48,6 +46,13 @@ public class Auction {
   @Column(name = "user_id")
   UUID userId;
 
+  @Column(name = "auction_status")
+  @Enumerated(EnumType.STRING)
+  private AuctionStatus auctionStatus;
+
+  @Column(name = "creation_time")
+  private LocalDateTime creationTime;
+
   Auction(BigDecimal loanAmount, Integer timePeriod, Float interestRate, @NonNull LocalDate endDate, UUID userId) {
     this.id = UUID.randomUUID();
     this.loanAmount = loanAmount;
@@ -55,6 +60,8 @@ public class Auction {
     this.interestRate = interestRate;
     this.userId = userId;
     setEndDate(endDate);
+    this.creationTime = LocalDateTime.now();
+    this.auctionStatus = AuctionStatus.ACTIVE;
   }
 
   private void setEndDate(LocalDate endDate) {
@@ -65,10 +72,17 @@ public class Auction {
   }
 
   void changeAuctionParameters(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate) {
+    if(this.auctionStatus != AuctionStatus.ACTIVE){
+      throw new IllegalStateException("Auction is terminated");
+    }
     this.loanAmount = loanAmount;
     this.timePeriod = timePeriod;
     this.interestRate = interestRate;
     setEndDate(endDate);
+  }
+
+  void makeAuctionTerminated(){
+    this.auctionStatus = AuctionStatus.TERMINATED;
   }
 
   AuctionQueryDto toAuctionDto(String username) {

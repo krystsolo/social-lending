@@ -14,7 +14,7 @@ class OfferFixtureData {
 
     static final Offer OFFER = new Offer(BigDecimal.valueOf(1000), 2.5, 2, AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID)
 
-    static final OfferQueryDto OFFER_QUERY = OFFER.toOfferDto(UserFixture.USER.username, LoanCalculatorFixtureData.CALCULATION_DTO)
+    static final OfferQueryDto OFFER_QUERY = OFFER.toOfferDto(UserFixture.USER.username, LoanCalculatorFixtureData.CALCULATION_DTO, UserFixture.USER.username)
 
     static final List<Offer> OFFER_LIST = [OFFER, OFFER]
 

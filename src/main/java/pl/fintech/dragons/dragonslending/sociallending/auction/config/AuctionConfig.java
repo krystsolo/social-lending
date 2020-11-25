@@ -8,6 +8,7 @@ import pl.fintech.dragons.dragonslending.sociallending.auction.Auction;
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionRepository;
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
+import pl.fintech.dragons.dragonslending.sociallending.offer.OfferService;
 
 @Configuration
 @EnableJpaRepositories(basePackageClasses = AuctionRepository.class)
@@ -15,7 +16,7 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 public class AuctionConfig {
 
   @Bean
-  AuctionService auctionService(AuctionRepository auctionRepository, UserService userService) {
-    return new AuctionService(auctionRepository, userService);
+  AuctionService auctionService(AuctionRepository auctionRepository, UserService userService, OfferService offerService) {
+    return new AuctionService(auctionRepository, userService, offerService);
   }
 }

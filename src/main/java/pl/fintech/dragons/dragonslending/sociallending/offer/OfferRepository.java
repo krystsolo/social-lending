@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Repository
 public interface OfferRepository extends JpaRepository<Offer, UUID> {
-  List<Offer> findAllByUserId(UUID userId);
+  List<Offer> findAllByUserIdAndOfferStatus(UUID userId, OfferStatus offerStatus);
 
   List<Offer> findAllByAuctionId(UUID auctionId);
 }

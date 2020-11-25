@@ -6,6 +6,8 @@ import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryD
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
+import pl.fintech.dragons.dragonslending.sociallending.offer.OfferService;
+import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -17,10 +19,11 @@ import java.util.stream.Collectors;
 public class AuctionService {
   private final AuctionRepository auctionRepository;
   private final UserService userService;
+  private final OfferService offerService;
 
   @Transactional(readOnly = true)
   public AuctionQueryDto getAuction(UUID id) {
-    Auction auction = auctionRepository.getOne(id);
+    Auction auction = auctionRepository.findByIdAndAuctionStatus(id, AuctionStatus.ACTIVE);
     UserDto user = userService.getUser(auction.getUserId());
     return auction.toAuctionDto(
         user.getUsername()
@@ -30,19 +33,24 @@ public class AuctionService {
   @Transactional(readOnly = true)
   public List<AuctionQueryDto> getAllNotCurrentUserAuctions() {
     return mapAuctionListToDto(auctionRepository
-        .findAllByUserIdIsNot(userService.getCurrentLoggedUser().getId()));
+        .findAllByUserIdIsNotAndAuctionStatusAndIdIsNotIn(
+            userService.getCurrentLoggedUser().getId(),
+            AuctionStatus.ACTIVE,
+            offerService.getCurrentLoggedUserOffers().stream().map(OfferQueryDto::getAuctionId).collect(Collectors.toList())));
   }
 
   @Transactional(readOnly = true)
   public List<AuctionQueryDto> getCurrentUserAuctions() {
     return mapAuctionListToDto(auctionRepository
-        .findAllByUserId(userService.getCurrentLoggedUser().getId()));
+        .findAllByUserIdAndAuctionStatus(
+            userService.getCurrentLoggedUser().getId(),
+            AuctionStatus.ACTIVE));
   }
 
   @Transactional(readOnly = true)
   public List<AuctionQueryDto> getPublicAuctions() {
     return mapAuctionListToDto(auctionRepository
-        .findAll());
+        .findAllByAuctionStatus(AuctionStatus.ACTIVE));
   }
 
   public UUID saveAuction(AuctionRequest dto) {
@@ -79,7 +87,11 @@ public class AuctionService {
     if (userService.getCurrentLoggedUser().getId() != auctionRepository.getOne(auctionId).userId) {
       throw new AccessDeniedException("You don't have permission to delete this auction");
     }
-    auctionRepository.deleteById(auctionId);
+
+    Auction auction = auctionRepository.getOne(auctionId);
+    offerService.makeOffersTerminatedByAuction(auctionId);
+    auction.makeAuctionTerminated();
+    auctionRepository.save(auction);
   }
 
   private List<AuctionQueryDto> mapAuctionListToDto(List<Auction> auctions) {

@@ -4,10 +4,7 @@ import lombok.*;
 import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculation;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -47,6 +44,10 @@ public class Offer {
   @Column(name = "user_id")
   UUID userId;
 
+  @Column(name = "status_offer")
+  @Enumerated(EnumType.STRING)
+  private OfferStatus offerStatus;
+
   Offer(BigDecimal offerAmount, Float interestRate, Integer timePeriod, UUID auctionId, UUID userId) {
     this.id = UUID.randomUUID();
     this.offerAmount = offerAmount;
@@ -54,15 +55,22 @@ public class Offer {
     this.timePeriod = timePeriod;
     this.auctionId = auctionId;
     this.userId = userId;
+    this.offerStatus = OfferStatus.ACTIVE;
   }
 
-  OfferQueryDto toOfferDto(String username, LoanCalculation calculationDto) {
+  public void makeOfferTerminated() {
+    this.offerStatus = OfferStatus.TERMINATED;
+  }
+
+  OfferQueryDto toOfferDto(String username, LoanCalculation calculationDto, String auctionOwner) {
     return OfferQueryDto.builder()
         .id(this.id)
         .offerAmount(this.offerAmount)
         .interestRate(this.interestRate)
         .calculation(calculationDto)
         .userId(this.userId)
+        .auctionId(this.auctionId)
+        .auctionOwner(auctionOwner)
         .username(username)
         .build();
   }
