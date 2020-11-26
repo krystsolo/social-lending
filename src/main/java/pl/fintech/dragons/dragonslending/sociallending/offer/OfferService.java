@@ -2,9 +2,12 @@ package pl.fintech.dragons.dragonslending.sociallending.offer;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService;
+import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
+import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculator;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
@@ -37,9 +40,10 @@ public class OfferService {
 
   public UUID saveOffer(OfferRequest dto) {
     AuctionQueryDto auction = auctionService.getAuction(dto.getAuctionId());
+    UserDto user = userService.getCurrentLoggedUser();
 
-    if (auction == null) {
-      throw new IllegalArgumentException("Incorrect auction id");
+    if (auction == null || offerRepository.findByAuctionIdAndUserId(dto.getAuctionId(), user.getId()) == null) {
+      throw new IllegalArgumentException("You can't add offer to this auction");
     }
 
     Offer def = new Offer(
@@ -47,7 +51,7 @@ public class OfferService {
         dto.getInterestRate(),
         auction.getTimePeriod(),
         dto.getAuctionId(),
-        userService.getCurrentLoggedUser().getId()
+        user.getId()
     );
 
     offerRepository.save(def);
@@ -63,11 +67,12 @@ public class OfferService {
     offerRepository.save(offer);
   }
 
-  public void makeOffersTerminatedByAuction(UUID auctionId) throws AccessDeniedException {
-    if (userService.getCurrentLoggedUser().getId() != auctionService.getAuction(auctionId).getUserId()) {
+  @EventListener
+  public void handle(AuctionTerminated event) throws AccessDeniedException {
+    if (userService.getCurrentLoggedUser().getId() != event.getUserId()) {
       throw new AccessDeniedException("You don't have enough permissions");
     }
-    offerRepository.findAllByAuctionId(auctionId).forEach(Offer::makeOfferTerminated);
+    offerRepository.findAllByAuctionId(event.getAuctionId()).forEach(Offer::makeOfferTerminated);
   }
 
   private List<OfferQueryDto> mapOfferListToDto(List<Offer> offers) {

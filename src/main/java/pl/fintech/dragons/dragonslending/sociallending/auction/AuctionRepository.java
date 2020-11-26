@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, UUID> {
-  List<Auction> findAllByUserIdIsNotAndAuctionStatusAndIdIsNotIn(UUID userId, AuctionStatus auctionStatus, List<UUID> idList);
+  List<Auction> findAllByUserIdIsNotAndAuctionStatus(UUID userId, AuctionStatus auctionStatus);
 
   List<Auction> findAllByUserIdAndAuctionStatus(UUID userId, AuctionStatus auctionStatus);
 

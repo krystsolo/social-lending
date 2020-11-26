@@ -2,12 +2,11 @@ package pl.fintech.dragons.dragonslending.sociallending.auction;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
-import pl.fintech.dragons.dragonslending.sociallending.offer.OfferService;
-import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 public class AuctionService {
   private final AuctionRepository auctionRepository;
   private final UserService userService;
-  private final OfferService offerService;
+  private final EventPublisher eventPublisher;
 
   @Transactional(readOnly = true)
   public AuctionQueryDto getAuction(UUID id) {
@@ -33,10 +32,9 @@ public class AuctionService {
   @Transactional(readOnly = true)
   public List<AuctionQueryDto> getAllNotCurrentUserAuctions() {
     return mapAuctionListToDto(auctionRepository
-        .findAllByUserIdIsNotAndAuctionStatusAndIdIsNotIn(
+        .findAllByUserIdIsNotAndAuctionStatus(
             userService.getCurrentLoggedUser().getId(),
-            AuctionStatus.ACTIVE,
-            offerService.getCurrentLoggedUserOffers().stream().map(OfferQueryDto::getAuctionId).collect(Collectors.toList())));
+            AuctionStatus.ACTIVE));
   }
 
   @Transactional(readOnly = true)
@@ -84,13 +82,13 @@ public class AuctionService {
   }
 
   public void deleteAuction(UUID auctionId) throws AccessDeniedException {
-    if (userService.getCurrentLoggedUser().getId() != auctionRepository.getOne(auctionId).userId) {
+    UserDto user = userService.getCurrentLoggedUser();
+    if (user.getId() != auctionRepository.getOne(auctionId).userId) {
       throw new AccessDeniedException("You don't have permission to delete this auction");
     }
 
     Auction auction = auctionRepository.getOne(auctionId);
-    offerService.makeOffersTerminatedByAuction(auctionId);
-    auction.makeAuctionTerminated();
+    eventPublisher.publish(AuctionTerminated.now(user.getId(), auctionId));
     auctionRepository.save(auction);
   }
 
