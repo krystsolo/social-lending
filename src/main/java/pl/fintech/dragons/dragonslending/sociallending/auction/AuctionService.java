@@ -10,6 +10,7 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -83,12 +84,14 @@ public class AuctionService {
 
   public void deleteAuction(UUID auctionId) throws AccessDeniedException {
     UserDto user = userService.getCurrentLoggedUser();
-    if (user.getId() != auctionRepository.getOne(auctionId).userId) {
+    Auction auction = auctionRepository.getOne(auctionId);
+
+    if (!user.getId().equals(auction.getUserId())) {
       throw new AccessDeniedException("You don't have permission to delete this auction");
     }
 
-    Auction auction = auctionRepository.getOne(auctionId);
     eventPublisher.publish(AuctionTerminated.now(user.getId(), auctionId));
+    auction.makeAuctionTerminated();
     auctionRepository.save(auction);
   }
 

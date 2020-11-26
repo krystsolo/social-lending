@@ -43,7 +43,7 @@ public class OfferService {
     UserDto user = userService.getCurrentLoggedUser();
 
     if (auction == null || offerRepository.findByAuctionIdAndUserId(dto.getAuctionId(), user.getId()) != null) {
-      throw new IllegalArgumentException("You can't add offer to this auction");
+      throw new IllegalArgumentException("You can't add an offer to this auction");
     }
 
     Offer def = new Offer(
@@ -59,7 +59,7 @@ public class OfferService {
   }
 
   public void deleteOffer(UUID offerId) throws AccessDeniedException {
-    if (userService.getCurrentLoggedUser().getId() != offerRepository.getOne(offerId).userId) {
+    if (!userService.getCurrentLoggedUser().getId().equals(offerRepository.getOne(offerId).userId)) {
       throw new AccessDeniedException("You don't have permission to delete this offer");
     }
     Offer offer = offerRepository.getOne(offerId);
@@ -69,7 +69,7 @@ public class OfferService {
 
   @EventListener
   public void handle(AuctionTerminated event) throws AccessDeniedException {
-    if (userService.getCurrentLoggedUser().getId() != event.getUserId()) {
+    if (!userService.getCurrentLoggedUser().getId().equals(event.getUserId())) {
       throw new AccessDeniedException("You don't have enough permissions");
     }
     offerRepository.findAllByAuctionId(event.getAuctionId()).forEach(Offer::makeOfferTerminated);

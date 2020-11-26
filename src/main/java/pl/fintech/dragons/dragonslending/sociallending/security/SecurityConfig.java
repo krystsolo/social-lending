@@ -17,6 +17,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDetailsProvider;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static pl.fintech.dragons.dragonslending.sociallending.security.SecurityConstants.*;
 
 @Configuration
@@ -64,7 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS", "HEAD"));
+        source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
 
