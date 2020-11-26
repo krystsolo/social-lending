@@ -72,7 +72,7 @@ public class Auction {
   }
 
   void changeAuctionParameters(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate) {
-    if(this.auctionStatus != AuctionStatus.ACTIVE){
+    if(this.auctionStatus == AuctionStatus.TERMINATED){
       throw new IllegalStateException("Auction is terminated");
     }
     this.loanAmount = loanAmount;

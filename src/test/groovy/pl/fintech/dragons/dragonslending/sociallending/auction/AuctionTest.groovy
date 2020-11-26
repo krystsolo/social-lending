@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 class AuctionTest extends Specification {
 
-    def "should return auction dto"() {
+    def "Should return auction dto"() {
         given:
         Auction auction = AuctionFixtureData.AUCTION
 
@@ -23,33 +23,56 @@ class AuctionTest extends Specification {
         auction.timePeriod == auctionQueryDto.timePeriod
         auction.interestRate == auctionQueryDto.interestRate
         auction.endDate == auctionQueryDto.endDate
+        auction.creationTime != null
+        auction.auctionStatus == AuctionStatus.ACTIVE
         auctionQueryDto.username == UserFixture.USER.username
         auctionQueryDto.userId == UserFixture.USER.id
     }
 
-    def "should change auction parameters"() {
-        def id = UUID.randomUUID()
+    def "Should change proper auction parameters"() {
         given:
-        Auction auction = new Auction(id, BigDecimal.TEN, RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), LocalDate.now().plusDays(1), UUID.randomUUID(), AuctionStatus.ACTIVE, LocalDateTime.now())
+        def id = UUID.randomUUID()
         LocalDate date = LocalDate.now().plusDays(1)
+        Auction auction = new Auction(id, BigDecimal.TEN, RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), date, UUID.randomUUID(), AuctionStatus.ACTIVE, LocalDateTime.now())
 
         when:
-        auction.changeAuctionParameters(BigDecimal.valueOf(2222), 5, 5, date);
+        auction.changeAuctionParameters(BigDecimal.valueOf(2222), 5, 5, date.plusDays(1));
 
         then:
         auction.id == id
         auction.loanAmount == BigDecimal.valueOf(2222)
         auction.timePeriod == 5
         auction.interestRate == 5
-        auction.endDate == date
+        auction.endDate == date.plusDays(1)
     }
 
-    def "should return proper auction object"() {
+    def "Should throw illegal state exception when auction status is terminated" () {
+        given:
+        Auction auction = new Auction(UUID.randomUUID(), BigDecimal.TEN, RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), LocalDate.now().plusDays(1), UUID.randomUUID(), AuctionStatus.TERMINATED, LocalDateTime.now())
+
+        when:
+        auction.changeAuctionParameters(BigDecimal.valueOf(2222), 5, 5, LocalDate.now().plusDays(1));
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def "Should change auction status to terminated" () {
+        given:
+        Auction auction = AuctionFixtureData.AUCTION
+
+        when:
+        auction.makeAuctionTerminated()
+
+        then:
+        auction.auctionStatus == AuctionStatus.TERMINATED
+    }
+
+    def "Should return proper auction object"() {
         given:
         BigDecimal loanAmount = BigDecimal.valueOf(1111)
         Integer timePeriod = 2
         Float interestRate = 5.2
-
 
         when:
         Auction auction = new Auction(loanAmount, timePeriod, interestRate, AuctionFixtureData.DATE, UserFixture.USER_ID)
@@ -60,16 +83,5 @@ class AuctionTest extends Specification {
         auction.interestRate == interestRate
         auction.endDate == AuctionFixtureData.DATE
         auction.userId == UserFixture.USER_ID
-    }
-
-    def "Should change auction status to TERMINATED"() {
-        given:
-        Auction auction = AuctionFixtureData.AUCTION
-
-        when:
-        auction.makeAuctionTerminated()
-
-        then:
-        auction.auctionStatus == AuctionStatus.TERMINATED
     }
 }

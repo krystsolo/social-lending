@@ -1,25 +1,21 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
-import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
-import pl.fintech.dragons.dragonslending.sociallending.offer.OfferFixtureData
-import pl.fintech.dragons.dragonslending.sociallending.offer.OfferService
 import spock.lang.Specification
 
 import java.nio.file.AccessDeniedException
-import java.util.stream.Collectors
 
 import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.*
-import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.AUCTION_QUERY_LIST
-import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.AUCTION_QUERY_LIST
+import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.AUCTION_ID
 
 class AuctionServiceTest extends Specification {
     AuctionRepository auctionRepository = Mock(AuctionRepository)
     UserService userService = Mock(UserService)
-    OfferService offerService = Mock(OfferService)
-    AuctionService auctionService = new AuctionService(auctionRepository, userService, offerService)
+    EventPublisher eventPublisher = Mock(EventPublisher)
+    AuctionService auctionService = new AuctionService(auctionRepository, userService, eventPublisher)
 
     def "Should get auction by id"() {
         given:
@@ -37,14 +33,7 @@ class AuctionServiceTest extends Specification {
         given:
         mockCurrentLoggedUser()
         mockUserById()
-
-        List<UUID> auctionIds = new ArrayList<>(OfferFixtureData.OFFER_QUERY_LIST
-                .stream().map({ e -> e.auctionId }).collect(Collectors.toList()))
-
-        offerService.getCurrentLoggedUserOffers() >> OfferFixtureData.OFFER_QUERY_LIST
-
-        auctionRepository.findAllByUserIdIsNotAndAuctionStatusAndIdIsNotIn(
-                UserFixture.USER_ID, AuctionStatus.ACTIVE, auctionIds) >> AUCTION_LIST
+        auctionRepository.findAllByUserIdIsNotAndAuctionStatus(UserFixture.USER_ID, AuctionStatus.ACTIVE) >> AUCTION_LIST
 
         when:
         def auctionQueryDto = auctionService.getAllNotCurrentUserAuctions()
@@ -59,15 +48,13 @@ class AuctionServiceTest extends Specification {
         given:
         mockUserById()
         mockCurrentLoggedUser()
-        List<AuctionQueryDto> auctionList = AUCTION_QUERY_LIST
-
         auctionRepository.findAllByUserIdAndAuctionStatus(UserFixture.USER_ID, AuctionStatus.ACTIVE) >> AUCTION_LIST
 
         when:
         def auctionQueryDto = auctionService.getCurrentUserAuctions()
 
         then:
-        auctionQueryDto == auctionList
+        auctionQueryDto == AUCTION_QUERY_LIST
         and:
         auctionQueryDto.size() == 2
     }
@@ -76,15 +63,13 @@ class AuctionServiceTest extends Specification {
         given:
         mockCurrentLoggedUser()
         mockUserById()
-        List<AuctionQueryDto> auctionList = AUCTION_QUERY_LIST
-
         auctionRepository.findAllByAuctionStatus(AuctionStatus.ACTIVE) >> AUCTION_LIST
 
         when:
         def auctionQueryDto = auctionService.getPublicAuctions()
 
         then:
-        auctionQueryDto == auctionList
+        auctionQueryDto == AUCTION_QUERY_LIST
         and:
         auctionQueryDto.size() == 2
     }
@@ -103,7 +88,7 @@ class AuctionServiceTest extends Specification {
     def "Should update auction"() {
         given:
         mockCurrentLoggedUser()
-        mockRepositoryGetOne()
+        auctionRepository.getOne(AUCTION_ID) >> new Auction(BigDecimal.valueOf(1000), 2, 2.5, DATE, UserFixture.USER_ID)
 
         when:
         def auctionId = auctionService.updateAuction(AUCTION_REQUEST, AUCTION_ID)
@@ -134,7 +119,7 @@ class AuctionServiceTest extends Specification {
 
 
         then:
-        1 * offerService.makeOffersTerminatedByAuction(AUCTION_ID)
+        1 * eventPublisher.publish(_ as AuctionTerminated)
         1 * auctionRepository.save(AUCTION)
     }
 
