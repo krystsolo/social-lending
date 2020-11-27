@@ -16,7 +16,5 @@ class AuctionDataFictureFactory {
     static final AuctionQueryDto AUCTION_QUERY_DTO = new AuctionQueryDto(
             AUCTION_ID, BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), DATE, UserData.USER_ID, UserData.USER.username)
 
-    static final Auction AUCTION = new Auction(BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), DATE, UserData.USER_ID)
-
     static final List<AuctionQueryDto> AUCTION_QUERY_LIST = [AUCTION_QUERY_DTO, AUCTION_QUERY_DTO]
 }

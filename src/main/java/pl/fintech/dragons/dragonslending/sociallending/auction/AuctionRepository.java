@@ -15,5 +15,5 @@ public interface AuctionRepository extends JpaRepository<Auction, UUID> {
 
   List<Auction> findAllByAuctionStatus(AuctionStatus auctionStatus);
 
-  Auction findByIdAndAuctionStatus(UUID auctionId, AuctionStatus auctionStatus);
+  Optional<Auction> findByIdAndAuctionStatus(UUID auctionId, AuctionStatus auctionStatus);
 }

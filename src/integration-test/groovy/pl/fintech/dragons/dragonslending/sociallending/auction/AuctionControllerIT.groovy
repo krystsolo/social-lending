@@ -62,21 +62,6 @@ class AuctionControllerIT extends Specification {
         response.body().as(AuctionQueryDto) == AuctionDataFictureFactory.AUCTION_QUERY_DTO
     }
 
-    def 'GET /api/auctions/public should return HTTP 200 with all auctions'() {
-        given:
-        mockedAuctionService.getPublicAuctions() >> AuctionDataFictureFactory.AUCTION_QUERY_LIST
-
-        when:
-        def response = restClient.when().get('/api/auctions/public')
-
-        then:
-        response.statusCode() == 200
-        and:
-        response.body().jsonPath().getList(".", AuctionQueryDto.class).size() == 2
-        and:
-        response.body().jsonPath().getList(".", AuctionQueryDto.class) == AuctionDataFictureFactory.AUCTION_QUERY_LIST
-    }
-
     def 'GET /api/auctions should return HTTP 200 with auction without current logged user'() {
         given:
         mockedAuctionService.getAllNotCurrentUserAuctions() >> AuctionDataFictureFactory.AUCTION_QUERY_LIST
@@ -98,6 +83,21 @@ class AuctionControllerIT extends Specification {
 
         when:
         def response = restClient.when().get('/api/auctions?yours=true')
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class).size() == 2
+        and:
+        response.body().jsonPath().getList(".", AuctionQueryDto.class) == AuctionDataFictureFactory.AUCTION_QUERY_LIST
+    }
+
+    def 'GET /api/auctions/public should return HTTP 200 with all auctions'() {
+        given:
+        mockedAuctionService.getPublicAuctions() >> AuctionDataFictureFactory.AUCTION_QUERY_LIST
+
+        when:
+        def response = restClient.when().get('/api/auctions/public')
 
         then:
         response.statusCode() == 200

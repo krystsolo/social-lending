@@ -14,6 +14,8 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.infrastructure.U
 import pl.fintech.dragons.dragonslending.sociallending.auction.config.AuctionConfig
 import spock.lang.Subject
 
+import java.time.LocalDateTime
+
 @DataJpaTest
 @ActiveProfiles("integration-test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -51,6 +53,8 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
             interestRate == auction.interestRate
             endDate == auction.endDate
             userId == auction.userId
+            auctionStatus == auction.auctionStatus
+            creationTime != null
         }
     }
 
@@ -64,14 +68,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         def fromDb = repository.getOne(auction.id)
 
         then:
-        with(fromDb) {
-            id == auction.id
-            loanAmount == auction.loanAmount
-            timePeriod == auction.timePeriod
-            interestRate == auction.interestRate
-            endDate == auction.endDate
-            userId == auction.userId
-        }
+        fromDb == auction
     }
 
     def 'Should return list of all auctions'() {
@@ -98,6 +95,8 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
             interestRate == auction1.interestRate
             endDate == auction1.endDate
             userId == auction1.userId
+            auctionStatus == auction1.auctionStatus
+            creationTime != null
         }
 
         and:
@@ -108,21 +107,56 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
             interestRate == auction2.interestRate
             endDate == auction2.endDate
             userId == auction2.userId
+            auctionStatus == auction2.auctionStatus
+            creationTime != null
         }
     }
 
-    def 'Should return list of all auctions by user id'() {
+    def 'Should return list of all active auctions without user auctions'() {
+        given:
+        UUID userUUID = addUserToDb()
+        UUID secondUserUUID = addSecondUserToDb()
+        repository.save(
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
+        Auction auction2 = repository.save(
+                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, secondUserUUID))
+        repository.save(
+                new Auction(UUID.randomUUID(), BigDecimal.valueOf(3000), 3, 3, AuctionDataFictureFactory.DATE, secondUserUUID, AuctionStatus.TERMINATED, LocalDateTime.now()))
+
+
+        when:
+        def fromDb = repository.findAllByUserIdIsNotAndAuctionStatus(userUUID, AuctionStatus.ACTIVE)
+
+        then:
+        fromDb.size() == 1
+
+        and:
+        with(fromDb.first()) {
+            id == auction2.id
+            loanAmount == auction2.loanAmount
+            timePeriod == auction2.timePeriod
+            interestRate == auction2.interestRate
+            endDate == auction2.endDate
+            userId == auction2.userId
+            auctionStatus == auction2.auctionStatus
+            creationTime != null
+        }
+    }
+
+    def 'Should return list of all auctions by user id and auction status'() {
         given:
         UUID userUUID = addUserToDb()
         UUID secondUserUUID = addSecondUserToDb()
         Auction auction1 = repository.save(
                 new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
+
         repository.save(
                 new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, secondUserUUID))
-
+        repository.save(
+                new Auction(UUID.randomUUID(), BigDecimal.valueOf(3000), 3, 3, AuctionDataFictureFactory.DATE, userUUID, AuctionStatus.TERMINATED, LocalDateTime.now()))
 
         when:
-        def fromDb = repository.findAllByUserId(userUUID)
+        def fromDb = repository.findAllByUserIdAndAuctionStatus(userUUID, AuctionStatus.ACTIVE)
 
         then:
         fromDb.size() == 1
@@ -135,35 +169,49 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
             interestRate == auction1.interestRate
             endDate == auction1.endDate
             userId == auction1.userId
+            auctionStatus == AuctionStatus.ACTIVE
+            creationTime != null
         }
     }
 
-    def 'Should return list of all auctions without auction with user id'() {
+    def 'Should return list of all auctions by auction status' () {
         given:
         UUID userUUID = addUserToDb()
-        UUID secondUserUUID = addSecondUserToDb()
         Auction auction1 = repository.save(
                 new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
-        Auction auction2 = repository.save(
-                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, secondUserUUID)
-        )
-
+        repository.save(
+                new Auction(UUID.randomUUID(), BigDecimal.valueOf(3000), 3, 3, AuctionDataFictureFactory.DATE, userUUID, AuctionStatus.TERMINATED, LocalDateTime.now()))
 
         when:
-        def fromDb = repository.findAllByUserIdIsNot(userUUID)
+        def fromDb = repository.findAllByAuctionStatus(AuctionStatus.ACTIVE)
 
         then:
         fromDb.size() == 1
 
         and:
         with(fromDb.first()) {
-            id == auction2.id
-            loanAmount == auction2.loanAmount
-            timePeriod == auction2.timePeriod
-            interestRate == auction2.interestRate
-            endDate == auction2.endDate
-            userId == auction2.userId
+            id == auction1.id
+            loanAmount == auction1.loanAmount
+            timePeriod == auction1.timePeriod
+            interestRate == auction1.interestRate
+            endDate == auction1.endDate
+            userId == auction1.userId
+            auctionStatus == AuctionStatus.ACTIVE
+            creationTime != null
         }
+    }
+
+    def 'Should return auction by id and auction status' () {
+        given:
+        UUID userUUID = addUserToDb()
+        Auction auction = repository.save(
+                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
+
+        when:
+        def fromDb = repository.findByIdAndAuctionStatus(auction.id, AuctionStatus.ACTIVE)
+
+        then:
+        fromDb.get() == auction
     }
 
     def "Should delete auction by id"() {

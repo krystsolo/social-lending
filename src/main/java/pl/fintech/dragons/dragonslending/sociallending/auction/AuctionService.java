@@ -10,6 +10,7 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,16 @@ public class AuctionService {
 
   @Transactional(readOnly = true)
   public AuctionQueryDto getAuction(UUID id) {
-    Auction auction = auctionRepository.findByIdAndAuctionStatus(id, AuctionStatus.ACTIVE);
-    UserDto user = userService.getUser(auction.getUserId());
-    return auction.toAuctionDto(
-        user.getUsername()
-    );
+    Optional<Auction> auction = auctionRepository.findByIdAndAuctionStatus(id, AuctionStatus.ACTIVE);
+
+    if (auction.isPresent()) {
+      UserDto user = userService.getUser(auction.get().getUserId());
+      return auction.get().toAuctionDto(
+          user.getUsername()
+      );
+    } else {
+      throw new IllegalStateException("An auction could not be found");
+    }
   }
 
   @Transactional(readOnly = true)

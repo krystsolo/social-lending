@@ -9,7 +9,6 @@ import spock.lang.Specification
 import java.nio.file.AccessDeniedException
 
 import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.*
-import static pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData.AUCTION_ID
 
 class AuctionServiceTest extends Specification {
     AuctionRepository auctionRepository = Mock(AuctionRepository)
@@ -20,13 +19,24 @@ class AuctionServiceTest extends Specification {
     def "Should get auction by id"() {
         given:
         mockUserById()
-        auctionRepository.findByIdAndAuctionStatus(AUCTION_ID, AuctionStatus.ACTIVE) >> AUCTION
+        auctionRepository.findByIdAndAuctionStatus(AUCTION_ID, AuctionStatus.ACTIVE) >> Optional.ofNullable(AUCTION)
 
         when:
         def auctionQueryDto = auctionService.getAuction(AUCTION_ID)
 
         then:
         auctionQueryDto == AUCTION.toAuctionDto(UserFixture.USER_DTO.username)
+    }
+
+    def "Should throw exception when auction repository doesn't return auction" () {
+        given:
+        auctionRepository.findByIdAndAuctionStatus(AUCTION_ID, AuctionStatus.ACTIVE) >> Optional.ofNullable(null)
+
+        when:
+        auctionService.getAuction(AUCTION_ID)
+
+        then:
+        thrown(IllegalStateException)
     }
 
     def "Should return list of all auctions without current logged user auctions"() {
@@ -120,7 +130,7 @@ class AuctionServiceTest extends Specification {
 
         then:
         1 * eventPublisher.publish(_ as AuctionTerminated)
-        1 * auctionRepository.save(AUCTION)
+        1 * auctionRepository.save(_ as Auction)
     }
 
     def "Should throw access denied exception during deleting auction when this auction is not assign to current logged user"() {
