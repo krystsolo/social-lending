@@ -13,6 +13,7 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.infrastructure.LoanConfig;
 import pl.fintech.dragons.dragonslending.sociallending.offer.Offer;
+import pl.fintech.dragons.dragonslending.sociallending.offer.OfferListener;
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferRepository;
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferService;
 
@@ -26,5 +27,10 @@ public class OfferConfig {
   OfferService offerService(OfferRepository offerRepository, LoanCalculationService loanCalculationService, UserService userService,
                             AuctionService auctionService, EventPublisher eventPublisher) {
     return new OfferService(offerRepository, loanCalculationService, userService, auctionService, eventPublisher);
+  }
+
+  @Bean
+  OfferListener offerListener(OfferRepository offerRepository, EventPublisher eventPublisher) {
+    return new OfferListener(offerRepository, eventPublisher);
   }
 }

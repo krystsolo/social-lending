@@ -3,8 +3,10 @@ package pl.fintech.dragons.dragonslending.sociallending.offer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
+import pl.fintech.dragons.dragonslending.common.exceptions.ResourceNotFoundException;
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService;
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
@@ -18,7 +20,6 @@ import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -65,7 +66,7 @@ public class OfferService {
         return offer.getId();
     }
 
-    public void deleteOffer(UUID offerId) throws AccessDeniedException {
+    public void deleteOffer(UUID offerId) {
         if (!userService.getCurrentLoggedUser().getId().equals(offerRepository.getOne(offerId).userId)) {
             throw new AccessDeniedException("You don't have permission to delete this offer");
         }
@@ -73,15 +74,6 @@ public class OfferService {
         Offer offer = offerRepository.getOne(offerId);
         offer.makeOfferTerminated();
         eventPublisher.publish(OfferTerminated.now(offer.getAuctionId(), offer.getId(), offer.getUserId(), offer.getOfferAmount()));
-    }
-
-    @EventListener
-    public void handle(AuctionTerminated event) {
-        offerRepository.findAllByAuctionId(event.getAuctionId())
-                .forEach(offer -> {
-                    offer.makeOfferTerminated();
-                    eventPublisher.publish(OfferTerminated.now(offer.getAuctionId(), offer.getId(), offer.getUserId(), offer.getOfferAmount()));
-                });
     }
 
     private List<OfferQueryDto> mapOfferListToDto(List<Offer> offers) {
@@ -104,5 +96,27 @@ public class OfferService {
         return new Calculation(
                 loanCalculation.totalAmountToRepaid(),
                 periodValue);
+    }
+
+    public void selectOffer(UUID offerId) {
+        Offer offer = offerRepository.findById(offerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Offer with id " + offerId + " not found"));
+        AuctionQueryDto auction = auctionService.getAuction(offer.getAuctionId());
+        UserDto user = userService.getCurrentLoggedUser();
+
+        if (!auction.getUserId().equals(user.getId())) {
+            throw new AccessDeniedException("You can't add an offer to this auction");
+        }
+
+        offer.makeOfferTerminated();
+        eventPublisher.publish(
+                OfferSelected.now(
+                        auction.getId(),
+                        offer.getId(),
+                        user.getId(),
+                        offer.getUserId(),
+                        offer.getOfferAmount(),
+                        offer.getInterestRate(),
+                        offer.getTimePeriod()));
     }
 }

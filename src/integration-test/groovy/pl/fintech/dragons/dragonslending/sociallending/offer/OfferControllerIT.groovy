@@ -120,6 +120,19 @@ class OfferControllerIT extends Specification {
         OfferDataFictureFactory.OFFER_REQUEST.withAuctionId(null)                        || 'Auction id cannot be null.'
     }
 
+    def 'POST /api/offers/{offerId}/select should return HTTP 200'() {
+        given:
+        UUID offerId = UUID.randomUUID()
+
+        when:
+        def response = restClient.when().post('/api/offers/' + offerId + '/select')
+
+        then:
+        response.statusCode() == 200
+        and:
+        1 * mockedOfferService.selectOffer(offerId)
+    }
+
     @TestConfiguration
     static class StubConfig {
         DetachedMockFactory detachedMockFactory = new DetachedMockFactory()

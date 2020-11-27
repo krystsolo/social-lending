@@ -59,4 +59,11 @@ public class OfferController {
     offerService.deleteOffer(id);
     return ResponseEntity.noContent().build();
   }
+
+  @Operation(summary = "Select offer")
+  @PostMapping("/offers/{offerId}/select")
+  void selectOffer(@PathVariable UUID offerId) {
+    log.debug("REST request to select Offer : {}", offerId);
+    offerService.selectOffer(offerId);
+  }
 }

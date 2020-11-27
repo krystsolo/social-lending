@@ -1,9 +1,9 @@
 package pl.fintech.dragons.dragonslending.sociallending.offer
 
+import org.springframework.security.access.AccessDeniedException
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
@@ -12,16 +12,14 @@ import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calcu
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import spock.lang.Specification
 
-import java.nio.file.AccessDeniedException
-
 class OfferServiceTest extends Specification {
+
     OfferRepository offerRepository = Mock(OfferRepository)
     UserService userService = Mock(UserService)
     LoanCalculationService loanCalculationService = Mock(LoanCalculationService)
     AuctionService auctionService = Mock(AuctionService)
     EventPublisher eventPublisher = Mock(EventPublisher)
     OfferService offerService = new OfferService(offerRepository, loanCalculationService, userService, auctionService, eventPublisher)
-
 
     def "Should return list of offers current logged user"() {
         given:
@@ -121,17 +119,19 @@ class OfferServiceTest extends Specification {
         thrown(AccessDeniedException)
     }
 
-    def "Should change offer status for terminated auction when AuctionTerminated event received" () {
+    def "Should select offer from auction"() {
         given:
-        AuctionTerminated auctionTerminated = AuctionTerminated.now(UserFixture.USER_ID, AuctionFixtureData.AUCTION_ID)
+        offerRepository.findById(OfferFixtureData.OFFER_ID) >> Optional.of(OfferFixtureData.OFFER)
+        mockCurrentLoggedUser()
+        mockGetAuction()
+        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> Optional.ofNullable(null)
 
         when:
-        offerService.handle(auctionTerminated)
+        offerService.selectOffer(OfferFixtureData.OFFER_ID)
 
         then:
-        1 * offerRepository.findAllByAuctionId(_ as UUID) >> []
+        1 * eventPublisher.publish(_ as OfferSelected)
     }
-
 
     void mockRepositoryGetOne() {
         offerRepository.getOne(OfferFixtureData.OFFER_ID) >> OfferFixtureData.OFFER
