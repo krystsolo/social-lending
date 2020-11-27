@@ -1,6 +1,7 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher
+import pl.fintech.dragons.dragonslending.common.exceptions.ResourceNotFoundException
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
@@ -36,7 +37,7 @@ class AuctionServiceTest extends Specification {
         auctionService.getAuction(AUCTION_ID)
 
         then:
-        thrown(IllegalStateException)
+        thrown(ResourceNotFoundException)
     }
 
     def "Should return list of all auctions without current logged user auctions"() {
