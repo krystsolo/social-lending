@@ -80,7 +80,6 @@ class OfferControllerIT extends Specification {
         response.body().jsonPath().getList(".", OfferQueryDto.class) == OfferDataFictureFactory.OFFER_QUERY_LIST
     }
 
-
     def 'POST /api/offers should return HTTP 201 with offer id'() {
         given:
         mockedOfferService.saveOffer(OfferDataFictureFactory.OFFER_REQUEST) >> OfferDataFictureFactory.OFFER_ID
@@ -93,7 +92,6 @@ class OfferControllerIT extends Specification {
         and:
         response.body().as(UUID.class) == OfferDataFictureFactory.OFFER_ID
     }
-
 
     def 'DELETE /api/offers/{id} should return HTTP 200'() {
         when:

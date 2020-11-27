@@ -42,7 +42,7 @@ public class OfferService {
     AuctionQueryDto auction = auctionService.getAuction(dto.getAuctionId());
     UserDto user = userService.getCurrentLoggedUser();
 
-    if (auction == null || offerRepository.findByAuctionIdAndUserId(dto.getAuctionId(), user.getId()) != null) {
+    if (auction == null || offerRepository.findByAuctionIdAndUserId(dto.getAuctionId(), user.getId()).isPresent()) {
       throw new IllegalArgumentException("You can't add an offer to this auction");
     }
 

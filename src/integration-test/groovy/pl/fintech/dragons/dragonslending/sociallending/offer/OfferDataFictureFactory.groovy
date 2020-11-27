@@ -3,6 +3,7 @@ package pl.fintech.dragons.dragonslending.sociallending.offer
 import org.apache.commons.lang3.RandomUtils
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionDataFictureFactory
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
+import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculation
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest
@@ -16,7 +17,7 @@ class OfferDataFictureFactory {
 
     static final LoanCalculation CALCULATION_DTO = new LoanCalculation(BigDecimal.valueOf(RandomUtils.nextInt(0, 1000000)), BigDecimal.valueOf(RandomUtils.nextInt(0, 1000000)))
 
-    static final OfferQueryDto OFFER_QUERY = OFFER.toOfferDto(UserData.USER.username, CALCULATION_DTO)
+    static final OfferQueryDto OFFER_QUERY = OFFER.toOfferDto(UserData.USER.username, CALCULATION_DTO, UserFixture.USER.username)
 
     static final List<Offer> OFFER_LIST = [OFFER, OFFER]
 

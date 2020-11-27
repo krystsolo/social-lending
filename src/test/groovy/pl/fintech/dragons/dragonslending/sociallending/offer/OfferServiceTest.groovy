@@ -59,7 +59,7 @@ class OfferServiceTest extends Specification {
         given:
         mockCurrentLoggedUser()
         mockGetAuction()
-        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> null
+        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> Optional.ofNullable(null)
 
         when:
         def offerId = offerService.saveOffer(OfferFixtureData.OFFER_REQUEST)
@@ -80,7 +80,7 @@ class OfferServiceTest extends Specification {
         given:
         mockGetAuction()
         mockCurrentLoggedUser()
-        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> OfferFixtureData.OFFER
+        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> Optional.ofNullable(OfferFixtureData.OFFER)
 
 
         when:

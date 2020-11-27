@@ -36,7 +36,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def 'Should store new auction'() {
         given:
         UUID userUUID = addUserToDb()
-        def auction = new Auction(BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), AuctionDataFictureFactory.DATE, userUUID)
+        Auction auction = addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
 
         when:
         repository.save(auction)
@@ -61,8 +61,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def 'Should return auction by id'() {
         given:
         UUID userUUID = addUserToDb()
-        Auction auction = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
+        Auction auction = addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
 
         when:
         def fromDb = repository.getOne(auction.id)
@@ -74,11 +73,8 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def 'Should return list of all auctions'() {
         given:
         UUID userUUID = addUserToDb()
-        Auction auction1 = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
-        Auction auction2 = repository.save(
-                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, userUUID)
-        )
+        Auction auction1 =  addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
+        Auction auction2 =  addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
 
 
         when:
@@ -112,16 +108,13 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         }
     }
 
-    def 'Should return list of all active auctions without user auctions'() {
+    def 'Should return list of all auctions by auction status and without user auctions'() {
         given:
         UUID userUUID = addUserToDb()
         UUID secondUserUUID = addSecondUserToDb()
-        repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
-        Auction auction2 = repository.save(
-                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, secondUserUUID))
-        repository.save(
-                new Auction(UUID.randomUUID(), BigDecimal.valueOf(3000), 3, 3, AuctionDataFictureFactory.DATE, secondUserUUID, AuctionStatus.TERMINATED, LocalDateTime.now()))
+        addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
+        Auction auction = addAuctionToDb(secondUserUUID, AuctionStatus.ACTIVE)
+        addAuctionToDb(userUUID, AuctionStatus.TERMINATED)
 
 
         when:
@@ -132,13 +125,13 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
 
         and:
         with(fromDb.first()) {
-            id == auction2.id
-            loanAmount == auction2.loanAmount
-            timePeriod == auction2.timePeriod
-            interestRate == auction2.interestRate
-            endDate == auction2.endDate
-            userId == auction2.userId
-            auctionStatus == auction2.auctionStatus
+            id == auction.id
+            loanAmount == auction.loanAmount
+            timePeriod == auction.timePeriod
+            interestRate == auction.interestRate
+            endDate == auction.endDate
+            userId == auction.userId
+            auctionStatus == auction.auctionStatus
             creationTime != null
         }
     }
@@ -147,13 +140,9 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
         given:
         UUID userUUID = addUserToDb()
         UUID secondUserUUID = addSecondUserToDb()
-        Auction auction1 = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
-
-        repository.save(
-                new Auction(BigDecimal.valueOf(2000), 2, 2, AuctionDataFictureFactory.DATE, secondUserUUID))
-        repository.save(
-                new Auction(UUID.randomUUID(), BigDecimal.valueOf(3000), 3, 3, AuctionDataFictureFactory.DATE, userUUID, AuctionStatus.TERMINATED, LocalDateTime.now()))
+        Auction auction = addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
+        addAuctionToDb(secondUserUUID, AuctionStatus.ACTIVE)
+        addAuctionToDb(userUUID, AuctionStatus.TERMINATED)
 
         when:
         def fromDb = repository.findAllByUserIdAndAuctionStatus(userUUID, AuctionStatus.ACTIVE)
@@ -163,12 +152,12 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
 
         and:
         with(fromDb.first()) {
-            id == auction1.id
-            loanAmount == auction1.loanAmount
-            timePeriod == auction1.timePeriod
-            interestRate == auction1.interestRate
-            endDate == auction1.endDate
-            userId == auction1.userId
+            id == auction.id
+            loanAmount == auction.loanAmount
+            timePeriod == auction.timePeriod
+            interestRate == auction.interestRate
+            endDate == auction.endDate
+            userId == auction.userId
             auctionStatus == AuctionStatus.ACTIVE
             creationTime != null
         }
@@ -177,10 +166,8 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def 'Should return list of all auctions by auction status' () {
         given:
         UUID userUUID = addUserToDb()
-        Auction auction1 = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
-        repository.save(
-                new Auction(UUID.randomUUID(), BigDecimal.valueOf(3000), 3, 3, AuctionDataFictureFactory.DATE, userUUID, AuctionStatus.TERMINATED, LocalDateTime.now()))
+        Auction auction = addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
+        addAuctionToDb(userUUID, AuctionStatus.TERMINATED)
 
         when:
         def fromDb = repository.findAllByAuctionStatus(AuctionStatus.ACTIVE)
@@ -190,12 +177,12 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
 
         and:
         with(fromDb.first()) {
-            id == auction1.id
-            loanAmount == auction1.loanAmount
-            timePeriod == auction1.timePeriod
-            interestRate == auction1.interestRate
-            endDate == auction1.endDate
-            userId == auction1.userId
+            id == auction.id
+            loanAmount == auction.loanAmount
+            timePeriod == auction.timePeriod
+            interestRate == auction.interestRate
+            endDate == auction.endDate
+            userId == auction.userId
             auctionStatus == AuctionStatus.ACTIVE
             creationTime != null
         }
@@ -204,8 +191,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def 'Should return auction by id and auction status' () {
         given:
         UUID userUUID = addUserToDb()
-        Auction auction = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
+        Auction auction = addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
 
         when:
         def fromDb = repository.findByIdAndAuctionStatus(auction.id, AuctionStatus.ACTIVE)
@@ -217,8 +203,7 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
     def "Should delete auction by id"() {
         given:
         UUID userUUID = addUserToDb()
-        Auction auction = repository.save(
-                new Auction(BigDecimal.valueOf(1000), 5, 4.0, AuctionDataFictureFactory.DATE, userUUID))
+        Auction auction = addAuctionToDb(userUUID, AuctionStatus.ACTIVE)
 
         when:
         repository.deleteById(auction.id)
@@ -234,5 +219,10 @@ class AuctionRepositoryIT extends PostgreSQLContainerSpecification {
 
     UUID addSecondUserToDb() {
         return userService.register(new UserRegisterRequest("email@email.pl", "string", "string", "string", "string"))
+    }
+
+    Auction addAuctionToDb(UUID userUUID, AuctionStatus auctionStatus){
+        repository.save(new Auction(UUID.randomUUID(), BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1,36),
+                RandomUtils.nextFloat(0,20), AuctionDataFictureFactory.DATE, userUUID, auctionStatus, LocalDateTime.now()))
     }
 }

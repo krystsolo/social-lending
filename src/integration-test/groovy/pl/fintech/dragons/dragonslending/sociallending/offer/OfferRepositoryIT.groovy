@@ -10,6 +10,7 @@ import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
 import pl.fintech.dragons.dragonslending.sociallending.auction.Auction
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionDataFictureFactory
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionRepository
+import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionStatus
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.web.UserRegisterRequest
@@ -41,7 +42,7 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         given:
         UUID userUUID = addUserToDb()
         UUID auctionUUID = addAuctionToDb(userUUID)
-        def offer = new Offer(BigDecimal.valueOf(1000), 4.0, 5, auctionUUID, userUUID)
+        Offer offer = addOfferToDb(userUUID, auctionUUID, OfferStatus.ACTIVE)
 
         when:
         repository.save(offer)
@@ -61,19 +62,17 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         }
     }
 
-    def 'Should return list of offers current logged user'() {
+    def 'Should return list of all offers by user id and offer status'() {
         given:
         UUID userUUID = addUserToDb()
         UUID userUUID2 = addSecondUserToDb()
         UUID auctionUUID = addAuctionToDb(userUUID)
-        Offer offer1 = repository.save(
-                new Offer(BigDecimal.valueOf(1000), 4.0, 5, auctionUUID, userUUID))
-        Offer offer2 = repository.save(
-                new Offer(BigDecimal.valueOf(2000), 2, 2, auctionUUID, userUUID2)
-        )
+        Offer offer1 = addOfferToDb(userUUID, auctionUUID, OfferStatus.ACTIVE)
+        addOfferToDb(userUUID2, auctionUUID, OfferStatus.ACTIVE)
+        addOfferToDb(userUUID, auctionUUID, OfferStatus.TERMINATED)
 
         when:
-        def fromDb = repository.findAllByUserId(userUUID)
+        def fromDb = repository.findAllByUserIdAndOfferStatus(userUUID, OfferStatus.ACTIVE)
 
         then:
         fromDb.size() == 1
@@ -94,11 +93,8 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         UUID userUUID = addUserToDb()
         UUID auctionUUID = addAuctionToDb(userUUID)
         UUID auctionUUID2 = addAuctionToDb(userUUID)
-        Offer offer1 = repository.save(
-                new Offer(BigDecimal.valueOf(1000), 4.0, 5, auctionUUID2, userUUID))
-        Offer offer2 = repository.save(
-                new Offer(BigDecimal.valueOf(2000), 2, 2, auctionUUID, userUUID)
-        )
+        Offer offer = addOfferToDb(userUUID, auctionUUID, OfferStatus.ACTIVE)
+        addOfferToDb(userUUID, auctionUUID2, OfferStatus.ACTIVE)
 
         when:
         def fromDb = repository.findAllByAuctionId(auctionUUID)
@@ -108,21 +104,33 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
 
         and:
         with(fromDb.first()) {
-            id == offer2.id
-            offerAmount == offer2.offerAmount
-            timePeriod == offer2.timePeriod
-            interestRate == offer2.interestRate
-            auctionId == offer2.auctionId
-            userId == offer2.userId
+            id == offer.id
+            offerAmount == offer.offerAmount
+            timePeriod == offer.timePeriod
+            interestRate == offer.interestRate
+            auctionId == offer.auctionId
+            userId == offer.userId
         }
+    }
+
+    def 'Should find offer by auction id and user id' () {
+        given:
+        UUID userUUID = addUserToDb()
+        UUID auctionUUID = addAuctionToDb(userUUID)
+        Offer offer = addOfferToDb(userUUID, auctionUUID, OfferStatus.ACTIVE)
+
+        when:
+        def fromDb = repository.findByAuctionIdAndUserId(auctionUUID, userUUID)
+
+        then:
+        fromDb.get() == offer
     }
 
     def "Should delete auction by id"() {
         given:
         UUID userUUID = addUserToDb()
         UUID auctionUUID = addAuctionToDb(userUUID)
-        Offer offer = repository.save(
-                new Offer(BigDecimal.valueOf(1000), 4.0, 5, auctionUUID, userUUID))
+        Offer offer = addOfferToDb(userUUID, auctionUUID, OfferStatus.ACTIVE)
 
         when:
         repository.deleteById(offer.id)
@@ -142,5 +150,9 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
 
     UUID addAuctionToDb(UUID userUUID) {
         return auctionRepository.save(new Auction(BigDecimal.valueOf(RandomUtils.nextInt(0, 10000)), RandomUtils.nextInt(1, 36), RandomUtils.nextFloat(0, 20), AuctionDataFictureFactory.DATE, userUUID)).id
+    }
+
+    Offer addOfferToDb(UUID userUUID, UUID auctionUUID, OfferStatus offerStatus) {
+        repository.save(new Offer(UUID.randomUUID(), BigDecimal.valueOf(1000), 4.0, RandomUtils.nextInt(1, 36), auctionUUID, userUUID, offerStatus))
     }
 }
