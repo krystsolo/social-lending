@@ -10,6 +10,7 @@ import pl.fintech.dragons.dragonslending.common.events.publisher.EventPublisherC
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanRepaymentHandlerScheduler;
+import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.OfferSelectedEventHandler;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.query.LoanFinder;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.query.LoanViewAssembler;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.Loan;
@@ -26,8 +27,13 @@ import pl.fintech.dragons.dragonslending.sociallending.payment.account.infrastru
 public class LoanConfig {
 
     @Bean
-    LoanCalculationService loanCalculationService() {
-        return new LoanCalculationService(new LoanCalculator(new SystemFeeCalculationPolicy()));
+    LoanCalculationService loanCalculationService(LoanCalculator loanCalculator) {
+        return new LoanCalculationService(loanCalculator);
+    }
+
+    @Bean
+    LoanCalculator loanCalculator() {
+        return new LoanCalculator(new SystemFeeCalculationPolicy());
     }
 
     @Bean
@@ -43,5 +49,10 @@ public class LoanConfig {
     @Bean
     LoanFinder loanFinder(LoanRepository loanRepository, UserService userService) {
         return new LoanFinder(loanRepository, userService, new LoanViewAssembler(userService));
+    }
+
+    @Bean
+    OfferSelectedEventHandler offerSelectedEventHandler(LoanRepository loanRepository, LoanCalculator loanCalculator) {
+        return new OfferSelectedEventHandler(loanRepository, loanCalculator);
     }
 }
