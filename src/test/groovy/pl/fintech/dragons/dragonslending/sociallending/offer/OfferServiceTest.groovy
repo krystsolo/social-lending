@@ -1,6 +1,6 @@
 package pl.fintech.dragons.dragonslending.sociallending.offer
 
-
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated
@@ -19,7 +19,8 @@ class OfferServiceTest extends Specification {
     UserService userService = Mock(UserService)
     LoanCalculationService loanCalculationService = Mock(LoanCalculationService)
     AuctionService auctionService = Mock(AuctionService)
-    OfferService offerService = new OfferService(offerRepository, loanCalculationService, userService, auctionService)
+    EventPublisher eventPublisher = Mock(EventPublisher)
+    OfferService offerService = new OfferService(offerRepository, loanCalculationService, userService, auctionService, eventPublisher)
 
 
     def "Should return list of offers current logged user"() {
@@ -67,6 +68,8 @@ class OfferServiceTest extends Specification {
 
         then:
         offerId != null
+        and:
+        1 * eventPublisher.publish(_ as OfferSubmitted)
     }
 
     def "Should throw illegal argument exception during create offer when auction id is null"() {
@@ -102,6 +105,8 @@ class OfferServiceTest extends Specification {
 
         then:
         OfferFixtureData.OFFER.offerStatus == OfferStatus.TERMINATED
+        and:
+        1 * eventPublisher.publish(_ as OfferTerminated)
     }
 
     def "Should throw access denied exception during deleting offer when this offer is not assign to current logged user"() {
