@@ -2,6 +2,7 @@ package pl.fintech.dragons.dragonslending.sociallending.offer
 
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService
+import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
@@ -25,9 +26,9 @@ class OfferServiceTest extends Specification {
         mockCurrentLoggedUser()
         mockUserById()
         mockLoanCalculator()
-        List<OfferQueryDto> offerList = [OfferFixtureData.OFFER.toOfferDto(UserFixture.USER_DTO.username, LoanCalculatorFixtureData.CALCULATION_DTO),
-                                         OfferFixtureData.OFFER.toOfferDto(UserFixture.USER_DTO.username, LoanCalculatorFixtureData.CALCULATION_DTO)]
-        offerRepository.findAllByUserId(UserFixture.USER_ID) >> OfferFixtureData.OFFER_LIST
+        mockGetAuction()
+        offerRepository.findAllByUserIdAndOfferStatus(UserFixture.USER_ID, OfferStatus.ACTIVE) >> OfferFixtureData.OFFER_LIST
+        List<OfferQueryDto> offerList = OfferFixtureData.OFFER_QUERY_LIST
 
         when:
         def offerQueryDto = offerService.getCurrentLoggedUserOffers()
@@ -40,18 +41,16 @@ class OfferServiceTest extends Specification {
 
     def "Should return list of offers by auction id"() {
         given:
-        mockCurrentLoggedUser()
         mockUserById()
         mockLoanCalculator()
-        List<OfferQueryDto> offerList = [OfferFixtureData.OFFER.toOfferDto(UserFixture.USER_DTO.username, LoanCalculatorFixtureData.CALCULATION_DTO),
-                                         OfferFixtureData.OFFER.toOfferDto(UserFixture.USER_DTO.username, LoanCalculatorFixtureData.CALCULATION_DTO)]
+        mockGetAuction()
         offerRepository.findAllByAuctionId(AuctionFixtureData.AUCTION_ID) >> OfferFixtureData.OFFER_LIST
 
         when:
         def offerQueryDto = offerService.getOffersByAuctionId(AuctionFixtureData.AUCTION_ID)
 
         then:
-        offerQueryDto == offerList
+        offerQueryDto == OfferFixtureData.OFFER_QUERY_LIST
         and:
         offerQueryDto.size() == 2
     }
@@ -59,7 +58,8 @@ class OfferServiceTest extends Specification {
     def "Should create new offer"() {
         given:
         mockCurrentLoggedUser()
-        auctionService.getAuction(AuctionFixtureData.AUCTION_ID) >> AuctionFixtureData.AUCTION_QUERY
+        mockGetAuction()
+        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> null
 
         when:
         def offerId = offerService.saveOffer(OfferFixtureData.OFFER_REQUEST)
@@ -70,7 +70,21 @@ class OfferServiceTest extends Specification {
 
     def "Should throw illegal argument exception during create offer when auction id is null"() {
         when:
-        def offerId = offerService.saveOffer(OfferFixtureData.OFFER_REQUEST)
+        offerService.saveOffer(OfferFixtureData.OFFER_REQUEST)
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def "Should throw illegal argument exception during create offer when we try add again offer to this same auction"() {
+        given:
+        mockGetAuction()
+        mockCurrentLoggedUser()
+        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> OfferFixtureData.OFFER
+
+
+        when:
+        offerService.saveOffer(OfferFixtureData.OFFER_REQUEST)
 
         then:
         thrown(IllegalArgumentException)
@@ -79,16 +93,16 @@ class OfferServiceTest extends Specification {
     def "Should delete offer"() {
         given:
         mockRepositoryGetOne()
-        userService.getCurrentLoggedUser() >> UserFixture.USER_DTO
+        mockCurrentLoggedUser()
 
         when:
         offerService.deleteOffer(OfferFixtureData.OFFER_ID)
 
 
         then:
-        1 * offerRepository.deleteById(OfferFixtureData.OFFER_ID)
+        OfferFixtureData.OFFER.offerStatus == OfferStatus.TERMINATED
+        1 * offerRepository.save(OfferFixtureData.OFFER)
     }
-
 
     def "Should throw access denied exception during deleting offer when this offer is not assign to current logged user"() {
         given:
@@ -100,6 +114,18 @@ class OfferServiceTest extends Specification {
 
         then:
         thrown(AccessDeniedException)
+    }
+
+    def "Should change offer status for terminated auction when AuctionTerminated event received" () {
+        given:
+        mockCurrentLoggedUser()
+        AuctionTerminated auctionTerminated = AuctionTerminated.now(UserFixture.USER_ID, AuctionFixtureData.AUCTION_ID)
+
+        when:
+        offerService.handle(auctionTerminated)
+
+        then:
+        1 * offerRepository.findAllByAuctionId(_ as UUID) >> []
     }
 
 
@@ -117,5 +143,9 @@ class OfferServiceTest extends Specification {
 
     void mockCurrentLoggedUser() {
         userService.getCurrentLoggedUser() >> UserFixture.USER_DTO
+    }
+
+    void mockGetAuction() {
+        auctionService.getAuction(OfferFixtureData.OFFER.auctionId) >> AuctionFixtureData.AUCTION_QUERY
     }
 }

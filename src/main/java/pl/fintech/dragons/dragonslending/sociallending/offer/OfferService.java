@@ -81,7 +81,7 @@ public class OfferService {
         .map(offer -> offer.toOfferDto(
             userService.getUser(offer.getUserId()).getUsername(),
             loanCalculator.calculate(offer.getOfferAmount(), offer.getTimePeriod(), offer.getInterestRate()),
-            userService.getUser(offer.getAuctionId()).getUsername())
+            userService.getUser(auctionService.getAuction(offer.getAuctionId()).getUserId()).getUsername())
         )
         .collect(Collectors.toList());
   }
