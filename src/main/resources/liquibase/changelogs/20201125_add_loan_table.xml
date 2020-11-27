@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="krystiansoloducha" id="20201125_add_loan_table.xml">
+        <createTable tableName="loan">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="borrower_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lender_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount_to_repaid_to_lender" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="system_fee" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="next_installment_date" type="DATE">
+                <constraints nullable="false" />
+            </column>
+            <column name="creation_time" type="timestamp">
+                <constraints nullable="false" />
+            </column>
+            <column name="installments_number" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="maciejparapura" id="20201125_add_loan_user_FK">
+        <addForeignKeyConstraint baseColumnNames="borrower_id"
+                                 baseTableName="loan"
+                                 constraintName="fk_loan_borrower_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_profile"/>
+        <addForeignKeyConstraint baseColumnNames="lender_id"
+                                 baseTableName="loan"
+                                 constraintName="fk_loan_lender_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_profile"/>
+    </changeSet>
+
+    <changeSet author="krystiansoloducha" id="20201125_add_loan_installment_table.xml">
+        <createTable tableName="loan_installment">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" />
+            </column>
+            <column name="loan_id" type="UUID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="calculated_lender_repayment_amount" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="lender_repayment_amount" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="calculated_system_repayment_amount" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="system_repayment_amount" type="DECIMAL(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="timely_repayment_time" type="DATE">
+                <constraints nullable="false" />
+            </column>
+            <column name="repayment_time" type="DATE">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="maciejparapura" id="20201125_add_loan_installment_loan_id_FK">
+        <addForeignKeyConstraint baseColumnNames="loan_id"
+                                 baseTableName="loan_installment"
+                                 constraintName="fk_loan_installment_loan_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="loan"/>
+    </changeSet>
+</databaseChangeLog>

@@ -26,4 +26,9 @@ public class AccountFinder {
         Account account = accountRepository.getOneByUserId(userId);
         return AccountInfo.from(account);
     }
+
+    public AccountInfo getAccountInfoFor(UUID userId) {
+        Account account = accountRepository.getOneByUserId(userId);
+        return AccountInfo.from(account);
+    }
 }

@@ -131,7 +131,6 @@ class AuctionServiceTest extends Specification {
 
         then:
         1 * eventPublisher.publish(_ as AuctionTerminated)
-        1 * auctionRepository.save(_ as Auction)
     }
 
     def "Should throw access denied exception during deleting auction when this auction is not assign to current logged user"() {

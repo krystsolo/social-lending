@@ -24,14 +24,13 @@ public class AuctionService {
 
   @Transactional(readOnly = true)
   public AuctionQueryDto getAuction(UUID id) {
-    Optional<Auction> auction = auctionRepository.findByIdAndAuctionStatus(id, AuctionStatus.ACTIVE);
+    Auction auction = auctionRepository.findByIdAndAuctionStatus(id, AuctionStatus.ACTIVE)
+            .orElseThrow(() -> new ResourceNotFoundException("An auction could not be found"));
 
-    auction.orElseThrow(() -> new ResourceNotFoundException("An auction could not be found"));
-    UserDto user = userService.getUser(auction.get().getUserId());
-    return auction.get().toAuctionDto(
+    UserDto user = userService.getUser(auction.getUserId());
+    return auction.toAuctionDto(
         user.getUsername()
     );
-
   }
 
   @Transactional(readOnly = true)
@@ -91,12 +90,11 @@ public class AuctionService {
     Auction auction = auctionRepository.getOne(auctionId);
 
     if (!user.getId().equals(auction.getUserId())) {
-      throw new AccessDeniedException("You don't have permission to delete this auction");
+        throw new AccessDeniedException("You don't have permission to delete this auction");
     }
 
     eventPublisher.publish(AuctionTerminated.now(user.getId(), auctionId));
     auction.makeAuctionTerminated();
-    auctionRepository.save(auction);
   }
 
   private List<AuctionQueryDto> mapAuctionListToDto(List<Auction> auctions) {

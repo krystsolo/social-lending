@@ -1,13 +1,14 @@
 package pl.fintech.dragons.dragonslending.sociallending.offer
 
+
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
-import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculator
-import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculatorFixtureData
+import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService
+import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import spock.lang.Specification
 
@@ -16,9 +17,9 @@ import java.nio.file.AccessDeniedException
 class OfferServiceTest extends Specification {
     OfferRepository offerRepository = Mock(OfferRepository)
     UserService userService = Mock(UserService)
-    LoanCalculator loanCalculator = Mock(LoanCalculator)
+    LoanCalculationService loanCalculationService = Mock(LoanCalculationService)
     AuctionService auctionService = Mock(AuctionService)
-    OfferService offerService = new OfferService(offerRepository, loanCalculator, userService, auctionService)
+    OfferService offerService = new OfferService(offerRepository, loanCalculationService, userService, auctionService)
 
 
     def "Should return list of offers current logged user"() {
@@ -101,7 +102,6 @@ class OfferServiceTest extends Specification {
 
         then:
         OfferFixtureData.OFFER.offerStatus == OfferStatus.TERMINATED
-        1 * offerRepository.save(OfferFixtureData.OFFER)
     }
 
     def "Should throw access denied exception during deleting offer when this offer is not assign to current logged user"() {
@@ -133,7 +133,7 @@ class OfferServiceTest extends Specification {
     }
 
     void mockLoanCalculator() {
-        loanCalculator.calculate(OfferFixtureData.OFFER.offerAmount, OfferFixtureData.OFFER.timePeriod, OfferFixtureData.OFFER.interestRate) >> LoanCalculatorFixtureData.CALCULATION_DTO
+        loanCalculationService.calculateAmountsToRepaid(OfferFixtureData.OFFER.offerAmount, OfferFixtureData.OFFER.timePeriod, OfferFixtureData.OFFER.interestRate) >> new LoanCalculation(BigDecimal.TEN, BigDecimal.TEN)
     }
 
     void mockUserById() {

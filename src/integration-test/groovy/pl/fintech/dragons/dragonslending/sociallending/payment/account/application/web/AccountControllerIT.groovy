@@ -66,7 +66,10 @@ class AccountControllerIT extends Specification {
         then:
         response.statusCode() == 200
         and:
-        response.body().as(AccountInfo) == accountInfo
+        (response.body().as(AccountInfo)).with {
+            balance == accountInfo.balance
+            availableFunds == accountInfo.availableFunds
+        }
     }
 
     def 'POST /api/account/withdraw should register new withdraw from user account and return HTTP 200'() {

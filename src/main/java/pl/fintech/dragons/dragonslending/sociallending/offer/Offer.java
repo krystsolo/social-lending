@@ -1,7 +1,7 @@
 package pl.fintech.dragons.dragonslending.sociallending.offer;
 
 import lombok.*;
-import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculation;
+import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
 
 import javax.persistence.*;
@@ -62,12 +62,12 @@ public class Offer {
     this.offerStatus = OfferStatus.TERMINATED;
   }
 
-  OfferQueryDto toOfferDto(String username, LoanCalculation calculationDto, String auctionOwner) {
+  OfferQueryDto toOfferDto(String username, Calculation calculation, String auctionOwner) {
     return OfferQueryDto.builder()
         .id(this.id)
         .offerAmount(this.offerAmount)
         .interestRate(this.interestRate)
-        .calculation(calculationDto)
+        .calculation(calculation)
         .userId(this.userId)
         .auctionId(this.auctionId)
         .auctionOwner(auctionOwner)

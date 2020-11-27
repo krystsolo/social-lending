@@ -9,10 +9,14 @@ import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
-import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculator;
+import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService;
+import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation;
+import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +26,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class OfferService {
   private final OfferRepository offerRepository;
-  private final LoanCalculator loanCalculator;
+  private final LoanCalculationService loanCalculationService;
   private final UserService userService;
   private final AuctionService auctionService;
 
@@ -62,24 +66,36 @@ public class OfferService {
     if (!userService.getCurrentLoggedUser().getId().equals(offerRepository.getOne(offerId).userId)) {
       throw new AccessDeniedException("You don't have permission to delete this offer");
     }
+
     Offer offer = offerRepository.getOne(offerId);
     offer.makeOfferTerminated();
-    offerRepository.save(offer);
   }
 
   @EventListener
   public void handle(AuctionTerminated event) {
-    offerRepository.findAllByAuctionId(event.getAuctionId()).forEach(Offer::makeOfferTerminated);
+    offerRepository.findAllByAuctionId(event.getAuctionId())
+            .forEach(Offer::makeOfferTerminated);
   }
 
   private List<OfferQueryDto> mapOfferListToDto(List<Offer> offers) {
     return offers
         .stream()
         .map(offer -> offer.toOfferDto(
-            userService.getUser(offer.getUserId()).getUsername(),
-            loanCalculator.calculate(offer.getOfferAmount(), offer.getTimePeriod(), offer.getInterestRate()),
-            userService.getUser(auctionService.getAuction(offer.getAuctionId()).getUserId()).getUsername())
-        )
-        .collect(Collectors.toList());
+                userService.getUser(offer.getUserId()).getUsername(),
+                getCalculation(offer),
+                userService.getUser(auctionService.getAuction(offer.getAuctionId()).getUserId()).getUsername())
+        ).collect(Collectors.toList());
+  }
+
+  private Calculation getCalculation(Offer offer) {
+    LoanCalculation loanCalculation = loanCalculationService.calculateAmountsToRepaid(
+            offer.getOfferAmount(),
+            offer.getTimePeriod(),
+            offer.getInterestRate());
+    BigDecimal periodValue = loanCalculation.totalAmountToRepaid()
+            .divide(BigDecimal.valueOf(offer.getTimePeriod()), 2, RoundingMode.HALF_UP);
+    return new Calculation(
+            loanCalculation.totalAmountToRepaid(),
+            periodValue);
   }
 }

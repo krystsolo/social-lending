@@ -41,4 +41,20 @@ class AccountFinderTest extends Specification {
         then:
         account == systemAccountNumber
     }
+
+    def "should retrieve user account from repository by id"() {
+        given:
+        UUID userId = UUID.randomUUID()
+        def account = new Account(userId)
+        account.deposit(10 as BigDecimal)
+        account.freeze(5 as BigDecimal)
+        accountRepository.getOneByUserId(userId) >> account
+
+        when:
+        def accountInfoOfCurrentLoggedUser = accountFinder.getAccountInfoFor(userId)
+
+        then:
+        accountInfoOfCurrentLoggedUser.balance == account.balance
+        accountInfoOfCurrentLoggedUser.availableFunds == account.availableBalance()
+    }
 }

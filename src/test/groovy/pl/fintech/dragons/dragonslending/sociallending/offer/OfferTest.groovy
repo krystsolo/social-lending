@@ -4,7 +4,7 @@ import org.apache.commons.lang3.RandomUtils
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionStatus
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
-import pl.fintech.dragons.dragonslending.sociallending.loanCalculator.LoanCalculatorFixtureData
+import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import spock.lang.Specification
 
@@ -13,16 +13,17 @@ class OfferTest extends Specification {
     def "Should return offer dto"() {
         given:
         Offer offer = OfferFixtureData.OFFER
+        def calculation = new Calculation(BigDecimal.TEN, BigDecimal.TEN)
 
         when:
-        OfferQueryDto offerQueryDto = offer.toOfferDto(UserFixture.USER.username, LoanCalculatorFixtureData.CALCULATION_DTO, UserFixture.USER.username)
+        OfferQueryDto offerQueryDto = offer.toOfferDto(UserFixture.USER.username, calculation, UserFixture.USER.username)
 
         then:
         offer.id == offerQueryDto.id
         offer.offerAmount == offerQueryDto.offerAmount
         offer.interestRate == offerQueryDto.interestRate
         offer.auctionId == offerQueryDto.auctionId
-        offerQueryDto.calculation == LoanCalculatorFixtureData.CALCULATION_DTO
+        offerQueryDto.calculation == calculation
         offerQueryDto.auctionOwner == UserFixture.USER.username
         offerQueryDto.username == UserFixture.USER.username
         offerQueryDto.userId == UserFixture.USER.id
