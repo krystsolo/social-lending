@@ -118,7 +118,6 @@ class OfferServiceTest extends Specification {
 
     def "Should change offer status for terminated auction when AuctionTerminated event received" () {
         given:
-        mockCurrentLoggedUser()
         AuctionTerminated auctionTerminated = AuctionTerminated.now(UserFixture.USER_ID, AuctionFixtureData.AUCTION_ID)
 
         when:

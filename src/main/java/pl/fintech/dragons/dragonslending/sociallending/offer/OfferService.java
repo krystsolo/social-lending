@@ -68,10 +68,7 @@ public class OfferService {
   }
 
   @EventListener
-  public void handle(AuctionTerminated event) throws AccessDeniedException {
-    if (!userService.getCurrentLoggedUser().getId().equals(event.getUserId())) {
-      throw new AccessDeniedException("You don't have enough permissions");
-    }
+  public void handle(AuctionTerminated event) {
     offerRepository.findAllByAuctionId(event.getAuctionId()).forEach(Offer::makeOfferTerminated);
   }
 
