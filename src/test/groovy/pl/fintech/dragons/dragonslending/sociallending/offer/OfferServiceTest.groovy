@@ -2,6 +2,7 @@ package pl.fintech.dragons.dragonslending.sociallending.offer
 
 import org.springframework.security.access.AccessDeniedException
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher
+import pl.fintech.dragons.dragonslending.common.exceptions.ResourceNotFoundException
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
@@ -94,7 +95,7 @@ class OfferServiceTest extends Specification {
 
     def "Should delete offer"() {
         given:
-        mockRepositoryGetOne()
+        mockRepositoryFindById()
         mockCurrentLoggedUser()
 
         when:
@@ -109,7 +110,7 @@ class OfferServiceTest extends Specification {
 
     def "Should throw access denied exception during deleting offer when this offer is not assign to current logged user"() {
         given:
-        mockRepositoryGetOne()
+        mockRepositoryFindById()
         userService.getCurrentLoggedUser() >> UserDto.builder().id(UUID.randomUUID()).build()
 
         when:
@@ -117,6 +118,17 @@ class OfferServiceTest extends Specification {
 
         then:
         thrown(AccessDeniedException)
+    }
+
+    def "Should throw resource not found exception during deleting offer when not found offer in database" () {
+        given:
+        offerRepository.findById(OfferFixtureData.OFFER_ID) >> Optional.ofNullable(null)
+
+        when:
+        offerService.deleteOffer(OfferFixtureData.OFFER_ID)
+
+        then:
+        thrown(ResourceNotFoundException)
     }
 
     def "Should select offer from auction"() {
@@ -133,8 +145,23 @@ class OfferServiceTest extends Specification {
         1 * eventPublisher.publish(_ as OfferSelected)
     }
 
-    void mockRepositoryGetOne() {
-        offerRepository.getOne(OfferFixtureData.OFFER_ID) >> OfferFixtureData.OFFER
+    def "Should return list of received offers" () {
+        given :
+        mockUserById()
+        mockLoanCalculator()
+        mockGetAuction()
+        auctionService.getCurrentUserAuctions() >> AuctionFixtureData.AUCTION_QUERY_LIST
+        offerRepository.findAllByAuctionIdIn(_ as List<UUID>) >> OfferFixtureData.OFFER_LIST
+
+        when:
+        def received = offerService.getListReceivedOffers()
+
+        then:
+        received == OfferFixtureData.OFFER_QUERY_LIST
+    }
+
+    void mockRepositoryFindById() {
+        offerRepository.findById(OfferFixtureData.OFFER_ID) >> Optional.ofNullable(OfferFixtureData.OFFER)
     }
 
     void mockLoanCalculator() {

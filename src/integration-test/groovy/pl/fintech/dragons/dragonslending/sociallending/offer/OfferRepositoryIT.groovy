@@ -52,14 +52,7 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         fromDb.size() == 1
 
         and:
-        with(fromDb.first()) {
-            id == offer.id
-            offerAmount == offer.offerAmount
-            timePeriod == offer.timePeriod
-            interestRate == offer.interestRate
-            auctionId == offer.auctionId
-            userId == offer.userId
-        }
+        fromDb == [offer]
     }
 
     def 'Should return list of all offers by user id and offer status'() {
@@ -78,14 +71,7 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         fromDb.size() == 1
 
         and:
-        with(fromDb.first()) {
-            id == offer1.id
-            offerAmount == offer1.offerAmount
-            timePeriod == offer1.timePeriod
-            interestRate == offer1.interestRate
-            auctionId == offer1.auctionId
-            userId == offer1.userId
-        }
+        fromDb == [offer1]
     }
 
     def 'Should return list of all offers by auction id'() {
@@ -103,14 +89,7 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         fromDb.size() == 1
 
         and:
-        with(fromDb.first()) {
-            id == offer.id
-            offerAmount == offer.offerAmount
-            timePeriod == offer.timePeriod
-            interestRate == offer.interestRate
-            auctionId == offer.auctionId
-            userId == offer.userId
-        }
+        fromDb == [offer]
     }
 
     def 'Should find offer by auction id and user id' () {
@@ -138,6 +117,21 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
 
         then:
         foundOffer.empty
+    }
+
+    def "Should return list of offer by list auction ids" () {
+        given:
+        UUID userUUID = addUserToDb()
+        UUID auctionUUID = addAuctionToDb(userUUID)
+        UUID auctionUUID2 = addAuctionToDb(userUUID)
+        Offer offer = addOfferToDb(userUUID, auctionUUID, OfferStatus.ACTIVE)
+        Offer offer2 = addOfferToDb(userUUID, auctionUUID2, OfferStatus.ACTIVE)
+
+        when:
+        def fromDb = repository.findAllByAuctionIdIn([auctionUUID, auctionUUID2])
+
+        then:
+        fromDb == [offer, offer2]
     }
 
     UUID addUserToDb() {

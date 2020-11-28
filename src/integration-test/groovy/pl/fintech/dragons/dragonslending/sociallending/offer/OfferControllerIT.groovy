@@ -93,12 +93,14 @@ class OfferControllerIT extends Specification {
         response.body().as(UUID.class) == OfferDataFictureFactory.OFFER_ID
     }
 
-    def 'DELETE /api/offers/{id} should return HTTP 200'() {
+    def 'DELETE /api/offers/{id} should return HTTP 204'() {
         when:
         def response = restClient.when().delete('/api/offers/' + OfferDataFictureFactory.OFFER_ID)
 
         then:
         response.statusCode() == 204
+        and:
+        1 * mockedOfferService.deleteOffer(OfferDataFictureFactory.OFFER_ID)
     }
 
     @Unroll
@@ -131,6 +133,22 @@ class OfferControllerIT extends Specification {
         response.statusCode() == 200
         and:
         1 * mockedOfferService.selectOffer(offerId)
+    }
+
+    def 'GET /api/offers/received should return HTTP 200 and list of received offers'() {
+        given:
+        mockedOfferService.getListReceivedOffers() >> OfferDataFictureFactory.OFFER_QUERY_LIST
+
+        when:
+        def response = restClient.when().get('/api/offers/received')
+
+        then:
+        response.statusCode() == 200
+        and:
+        response.body().jsonPath().getList(".", OfferQueryDto.class).size() == 2
+        and:
+        response.body().jsonPath().getList(".", OfferQueryDto.class) == OfferDataFictureFactory.OFFER_QUERY_LIST
+
     }
 
     @TestConfiguration

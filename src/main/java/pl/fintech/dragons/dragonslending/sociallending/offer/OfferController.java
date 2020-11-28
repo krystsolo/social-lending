@@ -13,7 +13,6 @@ import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,7 +53,7 @@ public class OfferController {
 
   @Operation(summary = "Delete offer by id")
   @DeleteMapping("/offers/{id}")
-  ResponseEntity<Void> deleteOffer(@PathVariable UUID id) throws AccessDeniedException {
+  ResponseEntity<Void> deleteOffer(@PathVariable UUID id) {
     log.debug("REST request to delete offer by id: {}", id);
     offerService.deleteOffer(id);
     return ResponseEntity.noContent().build();
@@ -65,5 +64,12 @@ public class OfferController {
   void selectOffer(@PathVariable UUID offerId) {
     log.debug("REST request to select Offer : {}", offerId);
     offerService.selectOffer(offerId);
+  }
+
+  @Operation(summary = "Get list of received offers")
+  @GetMapping("/offers/received")
+  List<OfferQueryDto> getAllReceivedOffers() {
+    log.debug("REST request to get list of received offers");
+    return offerService.getListReceivedOffers();
   }
 }

@@ -133,12 +133,14 @@ class AuctionControllerIT extends Specification {
         response.body().as(UUID.class) == AuctionDataFictureFactory.AUCTION_ID
     }
 
-    def 'DELETE /api/auctions/{id} should return HTTP 200'() {
+    def 'DELETE /api/auctions/{id} should return HTTP 204'() {
         when:
         def response = restClient.when().delete('/api/auctions/' + AuctionDataFictureFactory.AUCTION_ID)
 
         then:
         response.statusCode() == 204
+        and:
+        1 * mockedAuctionService.deleteAuction(AuctionDataFictureFactory.AUCTION_ID)
     }
 
     @Unroll
