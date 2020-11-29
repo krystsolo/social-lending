@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.sociallending.auction;
+package pl.fintech.dragons.dragonslending.sociallending.auction.domain;
 
 import lombok.NonNull;
 import lombok.Value;

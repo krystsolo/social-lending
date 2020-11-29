@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.common.events.publisher.EventPublisherConfig;
 import pl.fintech.dragons.dragonslending.sociallending.auction.*;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.sociallending.identity.infrastructure.UserConfig;
 

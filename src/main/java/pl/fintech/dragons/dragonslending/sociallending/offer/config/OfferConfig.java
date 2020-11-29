@@ -12,9 +12,9 @@ import pl.fintech.dragons.dragonslending.sociallending.auction.config.AuctionCon
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.infrastructure.LoanConfig;
-import pl.fintech.dragons.dragonslending.sociallending.offer.Offer;
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.Offer;
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferListener;
-import pl.fintech.dragons.dragonslending.sociallending.offer.OfferRepository;
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferRepository;
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferService;
 
 @Configuration

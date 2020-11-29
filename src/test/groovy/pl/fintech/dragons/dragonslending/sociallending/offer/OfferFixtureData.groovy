@@ -3,6 +3,7 @@ package pl.fintech.dragons.dragonslending.sociallending.offer
 import org.testcontainers.shaded.org.apache.commons.lang.math.RandomUtils
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.Offer
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest

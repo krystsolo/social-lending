@@ -1,6 +1,10 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionStatus
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionTerminated
 import spock.lang.Specification
 
 import java.time.LocalDate

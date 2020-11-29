@@ -3,7 +3,8 @@ package pl.fintech.dragons.dragonslending.sociallending.offer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionTerminated;
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.*;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.FrozenMoneyReleased;
 
 @RequiredArgsConstructor

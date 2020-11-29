@@ -10,6 +10,11 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferRepository
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferSelected
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferStatus
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferSubmitted
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferTerminated
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import spock.lang.Specification
 
@@ -69,14 +74,6 @@ class OfferServiceTest extends Specification {
         offerId != null
         and:
         1 * eventPublisher.publish(_ as OfferSubmitted)
-    }
-
-    def "Should throw illegal argument exception during create offer when auction id is null"() {
-        when:
-        offerService.saveOffer(OfferFixtureData.OFFER_REQUEST)
-
-        then:
-        thrown(IllegalArgumentException)
     }
 
     def "Should throw illegal argument exception during create offer when we try add again offer to this same auction"() {

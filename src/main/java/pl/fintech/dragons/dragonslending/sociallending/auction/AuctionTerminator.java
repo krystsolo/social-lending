@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionStatus;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionTerminated;
 
 import java.time.LocalDate;
 

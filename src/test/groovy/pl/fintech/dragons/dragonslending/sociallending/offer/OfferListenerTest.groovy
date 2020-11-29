@@ -2,8 +2,10 @@ package pl.fintech.dragons.dragonslending.sociallending.offer
 
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionTerminated
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferRepository
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferSelected
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.FrozenMoneyReleased
 import spock.lang.Specification
 

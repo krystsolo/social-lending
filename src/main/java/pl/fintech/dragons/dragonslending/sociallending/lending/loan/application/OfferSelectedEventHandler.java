@@ -7,7 +7,7 @@ import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.Loan;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculator;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.LoanRepository;
-import pl.fintech.dragons.dragonslending.sociallending.offer.OfferSelected;
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferSelected;
 
 @RequiredArgsConstructor
 @Transactional

@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.sociallending.auction;
+package pl.fintech.dragons.dragonslending.sociallending.auction.domain;
 
 import lombok.*;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
@@ -53,7 +53,7 @@ public class Auction {
   @Column(name = "creation_time")
   private LocalDateTime creationTime;
 
-  Auction(BigDecimal loanAmount, Integer timePeriod, Float interestRate, @NonNull LocalDate endDate, UUID userId) {
+  public Auction(BigDecimal loanAmount, Integer timePeriod, Float interestRate, @NonNull LocalDate endDate, UUID userId) {
     this.id = UUID.randomUUID();
     this.loanAmount = loanAmount;
     this.timePeriod = timePeriod;
@@ -71,7 +71,7 @@ public class Auction {
     this.endDate = endDate;
   }
 
-  void changeAuctionParameters(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate) {
+  public void changeAuctionParameters(BigDecimal loanAmount, Integer timePeriod, Float interestRate, LocalDate endDate) {
     if(this.auctionStatus == AuctionStatus.TERMINATED){
       throw new IllegalStateException("Auction is terminated");
     }
@@ -81,11 +81,11 @@ public class Auction {
     setEndDate(endDate);
   }
 
-  void makeAuctionTerminated(){
+  public void makeAuctionTerminated(){
     this.auctionStatus = AuctionStatus.TERMINATED;
   }
 
-  AuctionQueryDto toAuctionDto(String username) {
+  public AuctionQueryDto toAuctionDto(String username) {
     return AuctionQueryDto.builder()
         .id(this.id)
         .loanAmount(this.loanAmount)

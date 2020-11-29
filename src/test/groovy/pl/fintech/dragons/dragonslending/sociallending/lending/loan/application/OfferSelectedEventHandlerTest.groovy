@@ -3,7 +3,7 @@ package pl.fintech.dragons.dragonslending.sociallending.lending.loan.application
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.LoanRepository
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculator
-import pl.fintech.dragons.dragonslending.sociallending.offer.OfferSelected
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferSelected
 import spock.lang.Specification
 
 class OfferSelectedEventHandlerTest extends Specification {

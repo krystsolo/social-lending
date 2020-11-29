@@ -1,4 +1,4 @@
-package pl.fintech.dragons.dragonslending.sociallending.offer;
+package pl.fintech.dragons.dragonslending.sociallending.offer.domain;
 
 import lombok.*;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation;
@@ -48,7 +48,7 @@ public class Offer {
   @Enumerated(EnumType.STRING)
   private OfferStatus offerStatus;
 
-  Offer(BigDecimal offerAmount, Float interestRate, Integer timePeriod, UUID auctionId, UUID userId) {
+  public Offer(BigDecimal offerAmount, Float interestRate, Integer timePeriod, UUID auctionId, UUID userId) {
     this.id = UUID.randomUUID();
     this.offerAmount = offerAmount;
     this.interestRate = interestRate;
@@ -62,7 +62,7 @@ public class Offer {
     this.offerStatus = OfferStatus.TERMINATED;
   }
 
-  OfferQueryDto toOfferDto(String username, Calculation calculation, String auctionOwner) {
+  public OfferQueryDto toOfferDto(String username, Calculation calculation, String auctionOwner) {
     return OfferQueryDto.builder()
         .id(this.id)
         .offerAmount(this.offerAmount)

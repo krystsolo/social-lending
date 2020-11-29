@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.common.exceptions.ResourceNotFoundException;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionStatus;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionTerminated;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto;
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionRequest;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto;
@@ -11,7 +15,6 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,9 +27,9 @@ public class AuctionService {
 
   @Transactional(readOnly = true)
   public AuctionQueryDto getAuction(UUID id) {
-    Optional<Auction> optionalAuction = auctionRepository.findByIdAndAuctionStatus(id, AuctionStatus.ACTIVE);
+    Auction auction = auctionRepository.findByIdAndAuctionStatus(id, AuctionStatus.ACTIVE)
+            .orElseThrow(() -> new ResourceNotFoundException("An auction could not be found"));
 
-    Auction auction = optionalAuction.orElseThrow(() -> new ResourceNotFoundException("An auction could not be found"));
     UserDto user = userService.getUser(auction.getUserId());
     return auction.toAuctionDto(
         user.getUsername()

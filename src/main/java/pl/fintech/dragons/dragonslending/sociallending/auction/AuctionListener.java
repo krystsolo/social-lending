@@ -2,7 +2,9 @@ package pl.fintech.dragons.dragonslending.sociallending.auction;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
-import pl.fintech.dragons.dragonslending.sociallending.offer.OfferSelected;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction;
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository;
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferSelected;
 
 @RequiredArgsConstructor
 public class AuctionListener {

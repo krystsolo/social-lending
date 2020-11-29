@@ -2,8 +2,9 @@ package pl.fintech.dragons.dragonslending.sociallending.offer
 
 import org.apache.commons.lang3.RandomUtils
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionStatus
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.Offer
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferStatus
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import spock.lang.Specification

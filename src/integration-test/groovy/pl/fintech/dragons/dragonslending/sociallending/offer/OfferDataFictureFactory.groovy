@@ -5,6 +5,7 @@ import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionDataFictur
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.Offer
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest

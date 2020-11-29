@@ -1,6 +1,8 @@
 package pl.fintech.dragons.dragonslending.sociallending.auction
 
 import org.apache.commons.lang3.RandomUtils
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionStatus
 import pl.fintech.dragons.dragonslending.sociallending.auction.dto.AuctionQueryDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import spock.lang.Specification

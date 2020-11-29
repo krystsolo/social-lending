@@ -2,6 +2,10 @@ package pl.fintech.dragons.dragonslending.sociallending.auction
 
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.common.exceptions.ResourceNotFoundException
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionStatus
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionTerminated
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserDto
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService

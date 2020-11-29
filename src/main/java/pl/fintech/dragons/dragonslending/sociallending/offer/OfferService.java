@@ -12,6 +12,7 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService;
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation;
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.*;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.Calculation;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferQueryDto;
 import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest;
@@ -48,7 +49,7 @@ public class OfferService {
     AuctionQueryDto auction = auctionService.getAuction(dto.getAuctionId());
     UserDto user = userService.getCurrentLoggedUser();
 
-    if (auction == null || offerRepository.findByAuctionIdAndUserId(dto.getAuctionId(), user.getId()).isPresent()) {
+    if (offerRepository.findByAuctionIdAndUserId(dto.getAuctionId(), user.getId()).isPresent()) {
       throw new IllegalArgumentException("You can't add an offer to this auction");
     }
 
@@ -66,10 +67,10 @@ public class OfferService {
   }
 
   public void deleteOffer(UUID offerId) {
-    Optional<Offer> optionalOffer = offerRepository.findById(offerId);
+    Offer offer = offerRepository.findById(offerId)
+            .orElseThrow(() -> new ResourceNotFoundException("An offer could not be found"));
 
-    Offer offer = optionalOffer.orElseThrow(() -> new ResourceNotFoundException("An offer could not be found"));
-    if (!userService.getCurrentLoggedUser().getId().equals(offer.userId)) {
+    if (!userService.getCurrentLoggedUser().getId().equals(offer.getUserId())) {
       throw new AccessDeniedException("You don't have permission to delete this offer");
     }
     offer.makeOfferTerminated();

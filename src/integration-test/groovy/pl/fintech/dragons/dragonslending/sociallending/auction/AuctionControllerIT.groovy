@@ -171,7 +171,7 @@ class AuctionControllerIT extends Specification {
 
         @Bean
         AuctionService auctionService() {
-            return detachedMockFactory.Stub(AuctionService)
+            return detachedMockFactory.Mock(AuctionService)
         }
     }
 }

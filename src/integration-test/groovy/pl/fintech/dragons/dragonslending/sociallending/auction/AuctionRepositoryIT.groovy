@@ -7,6 +7,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionStatus
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.web.UserRegisterRequest

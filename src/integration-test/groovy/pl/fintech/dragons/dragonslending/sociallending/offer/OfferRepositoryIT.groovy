@@ -7,15 +7,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import pl.fintech.dragons.dragonslending.PostgreSQLContainerSpecification
-import pl.fintech.dragons.dragonslending.sociallending.auction.Auction
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.Auction
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionDataFictureFactory
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionRepository
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionStatus
+import pl.fintech.dragons.dragonslending.sociallending.auction.domain.AuctionRepository
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserData
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.web.UserRegisterRequest
 import pl.fintech.dragons.dragonslending.sociallending.identity.infrastructure.UserConfig
 import pl.fintech.dragons.dragonslending.sociallending.offer.config.OfferConfig
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.Offer
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferRepository
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferStatus
 import spock.lang.Subject
 
 @DataJpaTest
