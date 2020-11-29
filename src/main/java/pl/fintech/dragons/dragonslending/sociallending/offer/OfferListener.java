@@ -14,14 +14,14 @@ public class OfferListener {
     private final EventPublisher eventPublisher;
 
     @EventListener
-    public void handleAutionTermination(AuctionTerminated event) {
-        offerRepository.findAllByAuctionId(event.getAuctionId())
+    public void handleAuctionTermination(AuctionTerminated event) {
+        offerRepository.findAllByAuctionIdAndOfferStatus(event.getAuctionId(), OfferStatus.ACTIVE)
                 .forEach(this::terminateOffer);
     }
 
     @EventListener
     public void handleOfferSelection(OfferSelected event) {
-        offerRepository.findAllByAuctionId(event.getAuctionId())
+        offerRepository.findAllByAuctionIdAndOfferStatus(event.getAuctionId(), OfferStatus.ACTIVE)
                 .stream()
                 .filter(offer -> !offer.getId().equals(event.getOfferId()))
                 .forEach(this::terminateOffer);

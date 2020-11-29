@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface OfferRepository extends JpaRepository<Offer, UUID> {
   List<Offer> findAllByUserIdAndOfferStatus(UUID userId, OfferStatus offerStatus);
 
-  List<Offer> findAllByAuctionId(UUID auctionId);
+  List<Offer> findAllByAuctionIdAndOfferStatus(UUID auctionId, OfferStatus offerStatus);
 
   Optional<Offer> findByAuctionIdAndUserId(UUID auctionId, UUID userId);
 

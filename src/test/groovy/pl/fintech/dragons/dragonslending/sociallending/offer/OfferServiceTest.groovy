@@ -10,6 +10,7 @@ import pl.fintech.dragons.dragonslending.sociallending.identity.application.User
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.application.LoanCalculationService
 import pl.fintech.dragons.dragonslending.sociallending.lending.loan.domain.calculation.LoanCalculation
+import pl.fintech.dragons.dragonslending.sociallending.offer.domain.Offer
 import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferRepository
 import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferSelected
 import pl.fintech.dragons.dragonslending.sociallending.offer.domain.OfferStatus
@@ -50,7 +51,7 @@ class OfferServiceTest extends Specification {
         mockUserById()
         mockLoanCalculator()
         mockGetAuction()
-        offerRepository.findAllByAuctionId(AuctionFixtureData.AUCTION_ID) >> OfferFixtureData.OFFER_LIST
+        offerRepository.findAllByAuctionIdAndOfferStatus(AuctionFixtureData.AUCTION_ID, OfferStatus.ACTIVE) >> OfferFixtureData.OFFER_LIST
 
         when:
         def offerQueryDto = offerService.getOffersByAuctionId(AuctionFixtureData.AUCTION_ID)
@@ -130,7 +131,7 @@ class OfferServiceTest extends Specification {
 
     def "Should select offer from auction"() {
         given:
-        offerRepository.findById(OfferFixtureData.OFFER_ID) >> Optional.of(OfferFixtureData.OFFER)
+        offerRepository.findById(OfferFixtureData.OFFER_ID) >> Optional.of(new Offer(BigDecimal.valueOf(1000), 2.5, 2, AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID))
         mockCurrentLoggedUser()
         mockGetAuction()
         offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> Optional.ofNullable(null)

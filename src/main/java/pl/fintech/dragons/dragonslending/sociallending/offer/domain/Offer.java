@@ -74,4 +74,8 @@ public class Offer {
         .username(username)
         .build();
   }
+
+  public boolean isActive() {
+    return offerStatus == OfferStatus.ACTIVE;
+  }
 }

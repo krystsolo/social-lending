@@ -85,7 +85,7 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         addOfferToDb(userUUID, auctionUUID2, OfferStatus.ACTIVE)
 
         when:
-        def fromDb = repository.findAllByAuctionId(auctionUUID)
+        def fromDb = repository.findAllByAuctionIdAndOfferStatus(auctionUUID, OfferStatus.ACTIVE)
 
         then:
         fromDb.size() == 1

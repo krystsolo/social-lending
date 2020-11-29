@@ -20,7 +20,6 @@ import pl.fintech.dragons.dragonslending.sociallending.offer.dto.OfferRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,7 @@ public class OfferService {
 
   public List<OfferQueryDto> getOffersByAuctionId(UUID auctionId) {
     return mapOfferListToDto(offerRepository
-        .findAllByAuctionId(auctionId));
+        .findAllByAuctionIdAndOfferStatus(auctionId, OfferStatus.ACTIVE));
   }
 
   public UUID saveOffer(OfferRequest dto) {
@@ -70,7 +69,7 @@ public class OfferService {
     Offer offer = offerRepository.findById(offerId)
             .orElseThrow(() -> new ResourceNotFoundException("An offer could not be found"));
 
-    if (!userService.getCurrentLoggedUser().getId().equals(offer.getUserId())) {
+    if (!offer.isActive() || !userService.getCurrentLoggedUser().getId().equals(offer.getUserId())) {
       throw new AccessDeniedException("You don't have permission to delete this offer");
     }
     offer.makeOfferTerminated();
@@ -106,8 +105,8 @@ public class OfferService {
     AuctionQueryDto auction = auctionService.getAuction(offer.getAuctionId());
     UserDto user = userService.getCurrentLoggedUser();
 
-    if (!auction.getUserId().equals(user.getId())) {
-      throw new AccessDeniedException("You can't add an offer to this auction");
+    if (!offer.isActive() || !auction.getUserId().equals(user.getId())) {
+      throw new AccessDeniedException("You can't select an offer to this auction");
     }
 
     offer.makeOfferTerminated();
