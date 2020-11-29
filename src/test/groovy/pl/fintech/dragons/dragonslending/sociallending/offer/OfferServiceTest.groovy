@@ -66,7 +66,7 @@ class OfferServiceTest extends Specification {
         given:
         mockCurrentLoggedUser()
         mockGetAuction()
-        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> Optional.ofNullable(null)
+        offerRepository.findByAuctionIdAndUserIdAndOfferStatus(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID, OfferStatus.ACTIVE) >> Optional.ofNullable(null)
 
         when:
         def offerId = offerService.saveOffer(OfferFixtureData.OFFER_REQUEST)
@@ -81,7 +81,7 @@ class OfferServiceTest extends Specification {
         given:
         mockGetAuction()
         mockCurrentLoggedUser()
-        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> Optional.ofNullable(OfferFixtureData.OFFER)
+        offerRepository.findByAuctionIdAndUserIdAndOfferStatus(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID, OfferStatus.ACTIVE) >> Optional.ofNullable(OfferFixtureData.OFFER)
 
 
         when:
@@ -134,7 +134,7 @@ class OfferServiceTest extends Specification {
         offerRepository.findById(OfferFixtureData.OFFER_ID) >> Optional.of(new Offer(BigDecimal.valueOf(1000), 2.5, 2, AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID))
         mockCurrentLoggedUser()
         mockGetAuction()
-        offerRepository.findByAuctionIdAndUserId(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID) >> Optional.ofNullable(null)
+        offerRepository.findByAuctionIdAndUserIdAndOfferStatus(AuctionFixtureData.AUCTION_ID, UserFixture.USER_ID, OfferStatus.ACTIVE) >> Optional.ofNullable(null)
 
         when:
         offerService.selectOffer(OfferFixtureData.OFFER_ID)
@@ -149,7 +149,7 @@ class OfferServiceTest extends Specification {
         mockLoanCalculator()
         mockGetAuction()
         auctionService.getCurrentUserAuctions() >> AuctionFixtureData.AUCTION_QUERY_LIST
-        offerRepository.findAllByAuctionIdIn(_ as List<UUID>) >> OfferFixtureData.OFFER_LIST
+        offerRepository.findAllByAuctionIdInAndOfferStatus(_ as List<UUID>, OfferStatus.ACTIVE) >> OfferFixtureData.OFFER_LIST
 
         when:
         def received = offerService.getListReceivedOffers()

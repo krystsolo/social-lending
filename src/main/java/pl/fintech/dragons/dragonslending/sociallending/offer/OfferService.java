@@ -48,7 +48,7 @@ public class OfferService {
     AuctionQueryDto auction = auctionService.getAuction(dto.getAuctionId());
     UserDto user = userService.getCurrentLoggedUser();
 
-    if (offerRepository.findByAuctionIdAndUserId(dto.getAuctionId(), user.getId()).isPresent()) {
+    if (offerRepository.findByAuctionIdAndUserIdAndOfferStatus(dto.getAuctionId(), user.getId(), OfferStatus.ACTIVE).isPresent()) {
       throw new IllegalArgumentException("You can't add an offer to this auction");
     }
 
@@ -122,8 +122,9 @@ public class OfferService {
   }
 
   List<OfferQueryDto> getListReceivedOffers() {
-      return mapOfferListToDto(offerRepository.findAllByAuctionIdIn(
+      return mapOfferListToDto(offerRepository.findAllByAuctionIdInAndOfferStatus(
           auctionService.getCurrentUserAuctions()
-              .stream().map(AuctionQueryDto::getId).collect(Collectors.toList())));
+              .stream().map(AuctionQueryDto::getId).collect(Collectors.toList()),
+          OfferStatus.ACTIVE));
   }
 }

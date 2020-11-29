@@ -94,14 +94,14 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         fromDb == [offer]
     }
 
-    def 'Should find offer by auction id and user id' () {
+    def 'Should find active offer by auction id and user id' () {
         given:
         UUID userUUID = addUserToDb()
         UUID auctionUUID = addAuctionToDb(userUUID)
         Offer offer = addOfferToDb(userUUID, auctionUUID, OfferStatus.ACTIVE)
 
         when:
-        def fromDb = repository.findByAuctionIdAndUserId(auctionUUID, userUUID)
+        def fromDb = repository.findByAuctionIdAndUserIdAndOfferStatus(auctionUUID, userUUID, OfferStatus.ACTIVE)
 
         then:
         fromDb.get() == offer
@@ -121,7 +121,7 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         foundOffer.empty
     }
 
-    def "Should return list of offer by list auction ids" () {
+    def "Should return list of active offer by auction ids" () {
         given:
         UUID userUUID = addUserToDb()
         UUID auctionUUID = addAuctionToDb(userUUID)
@@ -130,7 +130,7 @@ class OfferRepositoryIT extends PostgreSQLContainerSpecification {
         Offer offer2 = addOfferToDb(userUUID, auctionUUID2, OfferStatus.ACTIVE)
 
         when:
-        def fromDb = repository.findAllByAuctionIdIn([auctionUUID, auctionUUID2])
+        def fromDb = repository.findAllByAuctionIdInAndOfferStatus([auctionUUID, auctionUUID2], OfferStatus.ACTIVE)
 
         then:
         fromDb == [offer, offer2]

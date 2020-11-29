@@ -13,7 +13,7 @@ public interface OfferRepository extends JpaRepository<Offer, UUID> {
 
   List<Offer> findAllByAuctionIdAndOfferStatus(UUID auctionId, OfferStatus offerStatus);
 
-  Optional<Offer> findByAuctionIdAndUserId(UUID auctionId, UUID userId);
+  Optional<Offer> findByAuctionIdAndUserIdAndOfferStatus(UUID auctionId, UUID userId, OfferStatus offerStatus);
 
-  List<Offer> findAllByAuctionIdIn(List<UUID> auctionList);
+  List<Offer> findAllByAuctionIdInAndOfferStatus(List<UUID> auctionList, OfferStatus offerStatus);
 }
