@@ -4,6 +4,7 @@ import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionFixtureData
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated
 import pl.fintech.dragons.dragonslending.sociallending.identity.UserFixture
+import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.FrozenMoneyReleased
 import spock.lang.Specification
 
 class OfferListenerTest extends Specification {
@@ -33,5 +34,16 @@ class OfferListenerTest extends Specification {
 
         then:
         1 * offerRepository.findAllByAuctionId(_ as UUID) >> []
+    }
+
+    def "Should change offer status to terminated for all user offers for whose frozen money was released"() {
+        given:
+        UUID userId = UUID.randomUUID()
+
+        when:
+        offerListener.handleFrozenMoneyReleased(FrozenMoneyReleased.now(userId, UUID.randomUUID()))
+
+        then:
+        1 * offerRepository.findAllByUserIdAndOfferStatus(_, _) >> []
     }
 }

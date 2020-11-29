@@ -3,11 +3,13 @@ package pl.fintech.dragons.dragonslending.sociallending.payment.account.applicat
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferSelected;
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferSubmitted;
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferTerminated;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.Account;
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.AccountRepository;
+import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.MoneyTransferEvent;
 
 import java.math.BigDecimal;
 
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 public class OfferEventHandler {
 
     private final AccountRepository accountRepository;
+    private final EventPublisher eventPublisher;
 
     @EventListener
     public void handleOfferSubmitted(OfferSubmitted event) {
@@ -39,5 +42,11 @@ public class OfferEventHandler {
 
         Account borrowerAccount = accountRepository.getOneByUserId(event.getBorrowerId());
         borrowerAccount.deposit(amount);
+
+        eventPublisher.publish(
+                MoneyTransferEvent.LendingMoneyTransferred.now(
+                        event.getBorrowerId(),
+                        event.getLenderId(),
+                        event.getAmount()));
     }
 }

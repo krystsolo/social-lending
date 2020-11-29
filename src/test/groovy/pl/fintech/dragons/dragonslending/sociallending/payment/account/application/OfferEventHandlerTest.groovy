@@ -1,16 +1,19 @@
 package pl.fintech.dragons.dragonslending.sociallending.payment.account.application
 
+import pl.fintech.dragons.dragonslending.common.events.EventPublisher
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferSelected
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferSubmitted
 import pl.fintech.dragons.dragonslending.sociallending.offer.OfferTerminated
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.Account
 import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.AccountRepository
+import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.MoneyTransferEvent
 import spock.lang.Specification
 
 class OfferEventHandlerTest extends Specification {
 
     AccountRepository accountRepository = Mock(AccountRepository)
-    OfferEventHandler offerEventHandler = new OfferEventHandler(accountRepository)
+    EventPublisher eventPublisher = Mock(EventPublisher)
+    OfferEventHandler offerEventHandler = new OfferEventHandler(accountRepository, eventPublisher)
 
     def "should handle offer submitted event"() {
         given:
@@ -64,5 +67,6 @@ class OfferEventHandlerTest extends Specification {
         then:
         borrowerAccount.getBalance() == BigDecimal.TEN
         lenderAccount.getBalance() == 90 as BigDecimal
+        1 * eventPublisher.publish(_ as MoneyTransferEvent.LendingMoneyTransferred)
     }
 }

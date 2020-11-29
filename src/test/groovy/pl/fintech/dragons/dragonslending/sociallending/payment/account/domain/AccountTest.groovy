@@ -109,6 +109,19 @@ class AccountTest extends Specification {
         thrown(IllegalStateException)
     }
 
+    def "should unfreeze all money on account"() {
+        given:
+        def account = new Account(UUID.randomUUID())
+        account.deposit(BigDecimal.TEN)
+        account.freeze(BigDecimal.TEN)
+
+        when:
+        account.unfreezeAllMoney()
+
+        then:
+        account.availableBalance() == BigDecimal.TEN
+    }
+
     def "should retrieve available balance on account"() {
         given:
         def account = new Account(UUID.randomUUID())

@@ -33,23 +33,23 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return repository.findByUsernameContainingIgnoreCase(username);
+        return repository.findByUsernameIgnoreCase(username);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return repository.findByEmailContainingIgnoreCase(email);
+        return repository.findByEmailIgnoreCase(email);
     }
 
     @Override
     public UserPrincipal getPrincipalFor(String email) {
-        return repository.findByEmailContainingIgnoreCase(email)
+        return repository.findByEmailIgnoreCase(email)
                 .map(user -> new UserPrincipal(user.getId(), user.getEmail(), user.getPassword()))
                 .orElseThrow(() -> new UsernameNotFoundException("User with email:" + email + " doesn't exist in database"));
     }
 
     interface UserJpaRepository extends JpaRepository<User, UUID> {
-        Optional<User> findByUsernameContainingIgnoreCase(String username);
-        Optional<User> findByEmailContainingIgnoreCase(String email);
+        Optional<User> findByUsernameIgnoreCase(String username);
+        Optional<User> findByEmailIgnoreCase(String email);
     }
 }

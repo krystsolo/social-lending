@@ -7,10 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.common.events.publisher.EventPublisherConfig;
-import pl.fintech.dragons.dragonslending.sociallending.auction.Auction;
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionListener;
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionRepository;
-import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionService;
+import pl.fintech.dragons.dragonslending.sociallending.auction.*;
 import pl.fintech.dragons.dragonslending.sociallending.identity.application.UserService;
 import pl.fintech.dragons.dragonslending.sociallending.identity.infrastructure.UserConfig;
 
@@ -28,5 +25,10 @@ public class AuctionConfig {
   @Bean
   AuctionListener auctionListener(AuctionRepository auctionRepository) {
     return new AuctionListener(auctionRepository);
+  }
+
+  @Bean
+  AuctionTerminator auctionTerminator(AuctionRepository auctionRepository, EventPublisher eventPublisher) {
+    return new AuctionTerminator(auctionRepository, eventPublisher);
   }
 }

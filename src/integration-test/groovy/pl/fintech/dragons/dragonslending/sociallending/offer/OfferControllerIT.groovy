@@ -157,7 +157,7 @@ class OfferControllerIT extends Specification {
 
         @Bean
         OfferService offerService() {
-            return detachedMockFactory.Stub(OfferService)
+            return detachedMockFactory.Mock(OfferService)
         }
     }
 }

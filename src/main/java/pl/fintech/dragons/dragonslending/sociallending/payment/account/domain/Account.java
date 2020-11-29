@@ -67,6 +67,10 @@ public class Account {
         this.frozenAmount = frozenAmount.subtract(amount);
     }
 
+    public void unfreezeAllMoney() {
+        this.frozenAmount = BigDecimal.ZERO;
+    }
+
     private void validateAmountIsNotNegative(BigDecimal amount) {
         if (negativeAmount(amount)) {
             throw new IllegalArgumentException("Amount cannot be negative: " + amount);

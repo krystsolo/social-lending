@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import pl.fintech.dragons.dragonslending.common.events.EventPublisher;
 import pl.fintech.dragons.dragonslending.sociallending.auction.AuctionTerminated;
+import pl.fintech.dragons.dragonslending.sociallending.payment.account.domain.FrozenMoneyReleased;
 
 @RequiredArgsConstructor
 public class OfferListener {
@@ -22,6 +23,12 @@ public class OfferListener {
         offerRepository.findAllByAuctionId(event.getAuctionId())
                 .stream()
                 .filter(offer -> !offer.getId().equals(event.getOfferId()))
+                .forEach(this::terminateOffer);
+    }
+
+    @EventListener
+    public void handleFrozenMoneyReleased(FrozenMoneyReleased event) {
+        offerRepository.findAllByUserIdAndOfferStatus(event.getUserId(), OfferStatus.ACTIVE)
                 .forEach(this::terminateOffer);
     }
 
