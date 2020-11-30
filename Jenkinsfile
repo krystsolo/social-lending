@@ -53,6 +53,28 @@ pipeline {
                 }
             }
         }
+        stage('E2E tests') {
+            when { branch 'master' }
+                agent {
+                docker {
+                    image 'cypress/base:10'
+                    reuseNode true
+                }
+            }
+            steps {
+                script {
+                    dir('e2e-repo') {
+                        git(
+                            branch: 'master',
+                            credentialsId: 'bitbucket-user-pass',
+                            url: "https://bitbucket.fintechchallenge.pl/scm/ersa/dragons-lending-e2e.git"
+                        )
+                        sh 'yarn install'
+                        sh 'yarn start'
+                    }
+                }
+            }
+        }
         stage('Deploy Uat') {
             when { branch 'master' }
             agent { docker 'fintech/kubernetes-agent' }
