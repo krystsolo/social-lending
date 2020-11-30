@@ -1,18 +1,97 @@
-This is regular application created via spring.io. Have a look at:
-* `Jenkinsfile` you'll find here how to build, push and deploy you application.
-* `kubernetes.yaml` check IngressRoute to find out how publish your application with DNS name over HTTPS
-* expose management port in you app and set readiness and liveness probes
-* remember to push docker images to appropriate registry
-* to keep registry easy-to-read, prefix your docker image with project name (ie. `ersa-team/dragons-lending-api`)
-* in kubernetes steps use `fintech/kubernetes-agent` agent which contains git, kubectl, helm
-* you don't have to specify kubernetes namespace - it's limited to project in which you build (ie. Training apps will be deployed to training namespace only)
-* there are two kuberentes configurations available `kubeconfig-sit` and `kubeconfig-sit` (check Jenkinsfile)
-* because of using tag `latest` you need to execute `kubectl rollout restart deployment dragons-lending-api`
-* use project as a DNS subdomain, to keep it clear (ie. `dragons-lending-api.ersa-team.fintechchallenge.pl`)
-* protect your ingress with basic auth credentials (using Traefik middleware)
-* in order to deploy application to production - use dedicated Jenkins job
+# Table of contents
 
-Application is available here: (username: example, password: example)
-* SIT - https://dragons-lending-api.ersa-team.sit.fintechchallenge.pl/
-* UAT - https://dragons-lending-api.ersa-team.uat.fintechchallenge.pl/
-* PROD - https://dragons-lending-api.ersa-team.fintechchallenge.pl/
+1. [About](#about)
+2. [TODO](#todo)
+3. [General assumptions](#general-assumptions)  
+    3.1 [Process discovery](#process-discovery)  
+    3.2 [Events](#events)    
+    3.8 [Architecture](#architecture)  
+4. [How to run](#how-to-run)
+4. [API documentation](#api-documentation)
+
+## About
+
+This is a project of a social lending platform, driven by 
+![business requirements](docs/Requirements.png).
+
+## TODO
+
+- correct tests descriptions
+- add some more data fixtures
+- update evenstorming diagram
+- move auction and offer packages to bidding module and migrate into hexagonal architecture
+- displaying user transactions 
+- do not allow creating new auction when user has already loans on amount higher than is allowed
+- create email notification functionality to inform user about offers, not paid repayments
+- add scoring module
+
+## General assumptions
+
+### Process discovery
+
+The first thing we started with was domain exploration with the help of EventStorming.  
+![Event Storming](docs/eventstorming.jpg)   
+
+### Project structure
+At the very beginning, not to overcomplicate the project, we decided to assign each bounded context
+to a separate package, which means that the system is a modular monolith. 
+
+Bounded contexts should (amongst others) introduce autonomy in the sense of architecture. Thus, each module
+encapsulating the context has its own local architecture aligned to problem complexity. 
+For modules where we discovered complex domain we used hexagonal architecture.
+In the case of a context, that during Event Storming turned out to lack any complex
+domain logic, we applied CRUD-like local architecture.  
+
+### Events
+To make modules more autonomous we tried to communicate with each other with spring events.
+Talking about communication between modules, we should know that events reduce coupling, but don't remove
+it completely. 
+    
+### Architecture
+
+To describe architecture in the system and coupling between components we are using C4.
+
+System context 
+![System context](docs/c4/system-context.png)
+
+Container diagram
+![container diagram](docs/c4/container-diagram.png)
+
+Component diagram
+![component diagram](docs/c4/component-diagram.png)
+
+## How to Run
+
+### Requirements
+
+* Java 11
+* Maven
+* Postgres or Docker env
+
+### Run locally
+
+When you have local Postgres running you can run the app by simply typing the following:
+
+```console
+$ mvn spring-boot:run
+```
+
+### Run with Docker-compose
+
+You can run application with database typing:
+
+```console
+docker-compose up
+```
+
+Please note application will be run with `dev` Spring profile to proper setup BankAPI mock.
+
+### Run integration and functional tests
+If you want to start integration or functional tests you need to have running docker environment.
+
+## API documentation
+API documentation has been created by a swagger tool and available here:
+- locally - http://localhost:8080/swagger-ui.html
+- SIT - https://dragons-lending-api.ersa-team.sit.fintechchallenge.pl/swagger-ui.html
+- UAT - https://dragons-lending-api.ersa-team.uat.fintechchallenge.pl/swagger-ui.html
+- PROD - https://dragons-lending-api.ersa-team.fintechchallenge.pl/swagger-ui.html
