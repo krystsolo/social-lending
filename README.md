@@ -24,6 +24,7 @@ This is a project of a social lending platform, driven by
 - do not allow creating new auction when user has already loans on amount higher than is allowed
 - create email notification functionality to inform user about offers, not paid repayments
 - add scoring module
+- add more functional tests
 
 ## General assumptions
 
